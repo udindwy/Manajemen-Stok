@@ -24,7 +24,7 @@ Aplikasi ini bertujuan untuk mengelola dan memantau stok barang dalam suatu sist
 1. **Produk & Kategori:** Admin menambahkan kategori terlebih dahulu, lalu produk.
 2. **Transaksi Stok Masuk:** Admin menambah stok produk.
 3. **Transaksi Stok Keluar:** Pengguna melakukan transaksi yang mengurangi stok produk.
-4. **Notifikasi Stok Minim:** Sistem memberi notifikasi menggunakan SweetAlert2 ketika stok mencapai batas minimum.
+4. **Notifikasi Stok Minim:** Sistem memberi notifikasi ketika stok mencapai batas minimum.
 5. **Laporan Stok:** Admin dapat melihat riwayat transaksi dan stok produk, serta mengunduh laporan dalam format PDF.
 
 ## 🛠️ **Teknologi yang Digunakan**
