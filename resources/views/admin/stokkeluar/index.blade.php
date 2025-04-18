@@ -26,28 +26,27 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Contoh data statis -->
-                        <tr class="text-center">
-                            <td>1</td>
-                            <td>Es Teh Manis</td>
-                            <td>Minuman</td>
-                            <td>15</td>
-                            <td>2025-04-16</td>
-                            <td>
-                                <a href="#" class="btn btn-warning btn-sm">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <a href="#" class="btn btn-danger btn-sm">
-                                    <i class="fas fa-trash"></i>
-                                </a>
-                            </td>
-                        </tr>
-
-                        {{-- Nanti tinggal isi dengan @foreach dari controller --}}
+                        @foreach ($stokKeluar as $item)
+                            <tr>
+                                <td class="text-center">{{ $loop->iteration }}</td>
+                                <td>{{ $item->produk->nama_produk }}</td>
+                                <td>{{ $item->produk->kategori->nama_kategori }}</td>
+                                <td>{{ $item->jumlah }}</td>
+                                <td>{{ \Carbon\Carbon::parse($item->tanggal_keluar)->format('Y-m-d H:i:s') }}</td>
+                                <td class="text-center">
+                                    <a href="#" class="btn btn-sm btn-warning">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="#" class="btn btn-sm btn-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        @endforeach
                     </tbody>
+
                 </table>
             </div>
         </div>
     </div>
-    
 @endsection

@@ -26,7 +26,7 @@
                 Menu Admin
             </div>
 
-            <li class="nav-item {{ $MKProduk ?? '' }}">
+            <li class="nav-item {{ $MProduk ?? '' }}">
                 <a class="nav-link" href="{{ route('produk') }}">
                     <i class="fas fa-fw fa-box"></i>
                     <span>Produk</span>
@@ -67,7 +67,7 @@
 
             <!-- Nav Item - Laporan -->
             <li class="nav-item {{ $MLaporan ?? '' }}">
-                <a class="nav-link" href="{{ route('laporan') }}">
+                <a class="nav-link" href="{{ route('laporan.mutasi_stok') }}">
                     <i class="fas fa-fw fa-chart-bar"></i>
                     <span>Laporan</span>
                 </a>

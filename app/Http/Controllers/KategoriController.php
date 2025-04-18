@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Kategori;
 use Illuminate\Http\Request;
 
 class KategoriController extends Controller
@@ -11,6 +12,7 @@ class KategoriController extends Controller
         $data = [
             'title' => 'Kategori Produk',
             "MKategori" => "active",
+            'kategori'  => Kategori::get(),
         ];
         return view('admin.kategori.index', $data);
     }

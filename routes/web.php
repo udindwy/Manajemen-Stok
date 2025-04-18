@@ -43,7 +43,8 @@ Route::middleware('checkLogin')->group(function () {
     Route::get('stokminim', [NotifikasiController::class, 'index'])->name('stokminim');
 
     // Route Laporan
-    Route::get('laporan', [LaporanController::class, 'index'])->name('laporan');
+    Route::get('mutasi_stok', [LaporanController::class, 'mutasiStok'])->name('laporan.mutasi_stok');
+    Route::get('mutasi_stok_pdf', [LaporanController::class, 'exportMutasiStokPDF'])->name('laporan.mutasi_stok_pdf');
 
     // Route Kelola User
     Route::get('user', [UserController::class, 'index'])->name('user');

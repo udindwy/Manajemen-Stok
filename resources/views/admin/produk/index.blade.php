@@ -21,32 +21,36 @@
                             <th>Nama Produk</th>
                             <th>Kategori</th>
                             <th>Stok</th>
-                            <th>Harga</th>
+                            <th>Stok Minimal</th>
+                            <th>Deskripsi</th>
+                            <th>Dibuat pada</th>
                             <th><i class="fas fa-cog"></i></th>
                         </tr>
                     </thead>
-                    <tbody>
 
-                        <tr class="text-center">
-                            <td>1</td>
-                            <td>Nasi Goreng Spesial</td>
-                            <td>Makanan</td>
-                            <td>25</td>
-                            <td>Rp15.000</td>
-                            <td>
-                                <a href="#" class="btn btn-warning btn-sm">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <a href="#" class="btn btn-danger btn-sm">
-                                    <i class="fas fa-trash"></i>
-                                </a>
-                            </td>
-                        </tr>
-                        {{-- <!-- Nanti diisi @foreach dari controller --> --}}
+                    <tbody>
+                        @foreach ($produk as $item)
+                            <tr>
+                                <td class="text-center">{{ $loop->iteration }}</td>
+                                <td>{{ $item->nama_produk }}</td>
+                                <td>{{ $item->kategori->nama_kategori }}</td>
+                                <td>{{ $item->stok }}</td>
+                                <td>{{ $item->stok_minimal }}</td>
+                                <td>{{ $item->deskripsi }}</td>
+                                <td>{{ $item->dibuat_pada }}</td>
+                                <td class="text-center">
+                                    <a href="#" class="btn btn-sm btn-warning">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="#" class="btn btn-sm btn-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        @endforeach
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
-    
 @endsection

@@ -24,22 +24,23 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Contoh data statis -->
-                        <tr class="text-center">
-                            <td>1</td>
-                            <td>Makanan</td>
-                            <td>2025-04-16</td>
-                            <td>
-                                <a href="#" class="btn btn-warning btn-sm">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <a href="#" class="btn btn-danger btn-sm">
-                                    <i class="fas fa-trash"></i>
-                                </a>
-                            </td>
-                        </tr>
-                        {{-- <!-- Data dinamis nanti pakai @foreach --> --}}
+                        @foreach ($kategori as $item)
+                            <tr class="text-center">
+                                <td>{{ $loop->iteration }}</td>
+                                <td class="text-left">{{ $item->nama_kategori }}</td>
+                                <td>{{ $item->dibuat_pada }}</td>
+                                <td>
+                                    <a href="#" class="btn btn-sm btn-warning">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="#" class="btn btn-sm btn-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        @endforeach
                     </tbody>
+
                 </table>
             </div>
         </div>

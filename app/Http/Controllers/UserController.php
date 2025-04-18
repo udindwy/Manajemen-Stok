@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Pengguna;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -10,7 +12,8 @@ class UserController extends Controller
     {
         $data = [
             'title' => 'Kelola Pengguna',
-            "MUser" => "active",
+            'MUser' => 'active',
+            'pengguna'  => Pengguna::get(),
         ];
         return view('admin.user.index', $data);
     }

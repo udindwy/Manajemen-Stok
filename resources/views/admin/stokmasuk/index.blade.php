@@ -26,25 +26,25 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Contoh data statis -->
-                        <tr class="text-center">
-                            <td>1</td>
-                            <td>Nasi Goreng Spesial</td>
-                            <td>Makanan</td>
-                            <td>10</td>
-                            <td>2025-04-16</td>
-                            <td>
-                                <a href="#" class="btn btn-warning btn-sm">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <a href="#" class="btn btn-danger btn-sm">
-                                    <i class="fas fa-trash"></i>
-                                </a>
-                            </td>
-                        </tr>
-
-                        {{-- Nanti tinggal looping pakai @foreach --}}
+                        @foreach ($stokMasuk as $item)
+                            <tr>
+                                <td class="text-center">{{ $loop->iteration }}</td>
+                                <td>{{ $item->produk->nama_produk }}</td>
+                                <td>{{ $item->produk->kategori->nama_kategori }}</td>
+                                <td class="text-center">{{ $item->jumlah }}</td>
+                                <td class="text-center">{{ $item->tanggal_masuk }}</td>
+                                <td class="text-center">
+                                    <a href="#" class="btn btn-sm btn-warning">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="#" class="btn btn-sm btn-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        @endforeach
                     </tbody>
+
                 </table>
             </div>
         </div>

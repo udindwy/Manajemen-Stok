@@ -7,16 +7,20 @@
     </h1>
 
     <div class="card">
-        <div class="card-header bg-danger text-white">
-            <h6 class="m-0 font-weight-bold">Stok Minimum</h6>
-        </div>
         <div class="card-body">
-            <div class="alert alert-warning">
-                Beberapa produk berada di bawah batas stok minimum. Segera lakukan penambahan stok!
-            </div>
+            @if ($produkMinim->count() > 0)
+                <div class="alert alert-warning">
+                    Beberapa produk berada di bawah batas stok minimum. Segera lakukan penambahan stok!
+                </div>
+            @else
+                <div class="alert alert-success">
+                    Semua produk memiliki stok yang cukup.
+                </div>
+            @endif
+
             <div class="table-responsive">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                    <thead class="bg-danger text-white text-center">
+                    <thead class="{{ $produkMinim->count() > 0 ? 'bg-danger' : 'bg-primary' }} text-white text-center">
                         <tr>
                             <th>No</th>
                             <th>Nama Produk</th>
@@ -27,22 +31,16 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="text-center">
-                            <td>1</td>
-                            <td>Teh Botol</td>
-                            <td>Minuman</td>
-                            <td><span class="badge badge-danger">3</span></td>
-                            <td>5</td>
-                            <td><span class="badge badge-warning">Stok Minim</span></td>
-                        </tr>
-                        <tr class="text-center">
-                            <td>2</td>
-                            <td>Nasi Putih</td>
-                            <td>Makanan</td>
-                            <td><span class="badge badge-danger">2</span></td>
-                            <td>10</td>
-                            <td><span class="badge badge-warning">Stok Minim</span></td>
-                        </tr>
+                        @foreach ($produkMinim as $item)
+                            <tr class="text-center">
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $item->nama_produk }}</td>
+                                <td>{{ $item->kategori->nama_kategori }}</td>
+                                <td><span class="badge badge-danger">{{ $item->stok }}</span></td>
+                                <td>{{ $item->stok_minimal }}</td>
+                                <td><span class="badge badge-warning">Stok Minim</span></td>
+                            </tr>
+                        @endforeach
                     </tbody>
                 </table>
             </div>

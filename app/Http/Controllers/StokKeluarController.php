@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\StokKeluar;
 use Illuminate\Http\Request;
 
 class StokKeluarController extends Controller
@@ -11,6 +12,7 @@ class StokKeluarController extends Controller
         $data = [
             'title' => 'Stok Keluar',
             "MKeluar" => "active",
+            'stokKeluar'  => StokKeluar::get(),
         ];
         return view('admin.stokkeluar.index', $data);
     }

@@ -27,24 +27,25 @@
                                 </th>
                             </tr>
                         </thead>
+
                         <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>Wahyualex</td>
-                                <td>udin.dwi@students.utdi.ac.id</td>
-                                <td class="text-center">
-                                    <span class="badge badge-dark badge-pill">Admin</span>
-                                </td>
-                                <td>2025-04-16</td>
-                                <td class="text-center">
-                                    <a href="" class="btn btn-warning btn-sm">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a href="" class="btn btn-danger btn-sm">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
-                                </td>
-                            </tr>
+                            @foreach ($pengguna as $item)
+                                <tr>
+                                    <td class="text-center">{{ $loop->iteration }}</td>
+                                    <td>{{ $item->nama }}</td>
+                                    <td>{{ $item->email }}</td>
+                                    <td>{{ $item->peran }}</td>
+                                    <td>{{ $item->dibuat_pada }}</td>
+                                    <td class="text-center">
+                                        <a href="#" class="btn btn-sm btn-warning">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="#" class="btn btn-sm btn-danger">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
