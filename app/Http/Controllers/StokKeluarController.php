@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Produk;
 use App\Models\StokKeluar;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class StokKeluarController extends Controller
 {
@@ -15,5 +17,52 @@ class StokKeluarController extends Controller
             'stokKeluar'  => StokKeluar::get(),
         ];
         return view('admin.stokkeluar.index', $data);
+    }
+
+    public function create()
+    {
+        $data = [
+            'title' => 'Tambah Stok Keluar',
+            'MKeluar' => 'active',
+            'produk' => Produk::all()
+        ];
+        return view('admin.stokkeluar.create', $data);
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'id_produk' => 'required|exists:produk,id_produk',
+            'jumlah' => 'required|integer|min:1',
+            'tanggal_keluar' => 'required|date',
+        ], [
+            'id_produk.required' => 'Produk harus dipilih',
+            'id_produk.exists' => 'Produk tidak ditemukan',
+            'jumlah.required' => 'Jumlah tidak boleh kosong',
+            'jumlah.integer' => 'Jumlah harus berupa angka',
+            'jumlah.min' => 'Jumlah minimal 1',
+            'tanggal_keluar.required' => 'Tanggal keluar tidak boleh kosong',
+            'tanggal_keluar.date' => 'Format tanggal tidak valid',
+        ]);
+
+        $produk = Produk::findOrFail($request->id_produk);
+
+        if ($produk->stok < $request->jumlah) {
+            return redirect()->back()->withErrors(['jumlah' => 'Stok tidak mencukupi untuk dikeluarkan'])->withInput();
+        }
+
+        // simpan data ke stok_keluar
+        $stokKeluar = new StokKeluar();
+        $stokKeluar->id_produk = $request->id_produk;
+        $stokKeluar->jumlah = $request->jumlah;
+        $stokKeluar->tanggal_keluar = $request->tanggal_keluar;
+        $stokKeluar->id_pengguna = Auth::id();
+        $stokKeluar->save();
+
+        // update stok produk
+        $produk->stok -= $request->jumlah;
+        $produk->save();
+
+        return redirect()->route('stokkeluar')->with('success', 'Stok keluar berhasil ditambahkan');
     }
 }

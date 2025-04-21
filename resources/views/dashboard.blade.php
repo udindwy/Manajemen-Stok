@@ -17,7 +17,7 @@
                                 Jumlah Pengguna
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                25 Pengguna
+                                {{ $jumlahPengguna }}
                             </div>
                         </div>
                         <div class="col-auto">
@@ -38,7 +38,7 @@
                                 Total Produk
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                120
+                                {{ $totalProduk }}
                             </div>
                         </div>
                         <div class="col-auto">
@@ -59,7 +59,7 @@
                                 Total Stok Masuk
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                560
+                                {{ $totalStokMasuk }}
                             </div>
                         </div>
                         <div class="col-auto">
@@ -80,7 +80,7 @@
                                 Total Stok Keluar
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                340
+                                {{ $totalStokKeluar }}
                             </div>
                         </div>
                         <div class="col-auto">
@@ -101,7 +101,7 @@
                                 Produk Stok Minim
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                5 Produk
+                                {{ $produkStokMinim }}
                             </div>
                         </div>
                         <div class="col-auto">

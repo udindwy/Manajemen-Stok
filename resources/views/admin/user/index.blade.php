@@ -9,8 +9,8 @@
     <div class="card">
         <div class="card-header">
             <div>
-                <a href="" class="btn btn-sm btn-primary">
-                    <i class="fas fa-plus mr-2"></i>Tambah Data</a>
+                <a href="{{ route('userCreate') }}" class="btn btn-sm btn-primary">
+                    <i class="fas fa-plus mr-2"></i>Tambah Pengguna</a>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -34,7 +34,13 @@
                                     <td class="text-center">{{ $loop->iteration }}</td>
                                     <td>{{ $item->nama }}</td>
                                     <td>{{ $item->email }}</td>
-                                    <td>{{ $item->peran }}</td>
+                                    <td class="text-center">
+                                        @if ($item->peran == 'admin')
+                                            <span class="badge badge-info">{{ $item->peran }}</span>
+                                        @elseif ($item->peran == 'pengguna')
+                                            <span class="badge badge-primary">{{ $item->peran }}</span>
+                                        @endif
+                                    </td>
                                     <td>{{ $item->dibuat_pada }}</td>
                                     <td class="text-center">
                                         <a href="#" class="btn btn-sm btn-warning">

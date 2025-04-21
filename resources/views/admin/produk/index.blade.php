@@ -8,7 +8,7 @@
 
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <a href="#" class="btn btn-sm btn-primary">
+            <a href="{{ route('produkCreate') }}" class="btn btn-sm btn-primary">
                 <i class="fas fa-plus mr-2"></i>Tambah Produk
             </a>
         </div>

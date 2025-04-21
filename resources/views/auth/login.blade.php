@@ -12,7 +12,7 @@
     <title>M-Stok - Login</title>
 
     <!-- Custom fonts for this template-->
-    <link href="{{ asset('assets/vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ asset('assets/vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css"> 
 
     <!-- Google Fonts (tetap pakai URL karena dari CDN) -->
     <link

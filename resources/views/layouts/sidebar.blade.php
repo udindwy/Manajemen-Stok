@@ -75,7 +75,7 @@
 
             <!-- Nav Item - Kelola Pengguna -->
             <li class="nav-item {{ $MUser ?? '' }}">
-                <a class="nav-link" href="{{ 'user' }}">
+                <a class="nav-link" href="{{ route('user') }}">
                     <i class="fas fa-fw fa-users"></i>
                     <span>Kelola Penngguna</span>
                 </a>

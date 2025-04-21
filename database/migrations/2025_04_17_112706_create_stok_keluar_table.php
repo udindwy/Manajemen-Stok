@@ -14,6 +14,7 @@ class CreateStokKeluarTable extends Migration
             $table->integer('jumlah');
             $table->unsignedBigInteger('id_pengguna');
             $table->dateTime('tanggal_keluar');
+            $table->timestamps();
 
             $table->foreign('id_produk')->references('id_produk')->on('produk')->onDelete('cascade');
             $table->foreign('id_pengguna')->references('id_pengguna')->on('pengguna')->onDelete('cascade');
