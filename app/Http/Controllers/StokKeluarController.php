@@ -65,4 +65,15 @@ class StokKeluarController extends Controller
 
         return redirect()->route('stokkeluar')->with('success', 'Stok keluar berhasil ditambahkan');
     }
+
+    public function edit($id_stok_keluar)
+    {
+        $data = [
+            'title' => 'Edit Stok Keluar',
+            'MKeluar' => 'active',
+            'stokKeluar' => StokKeluar::findOrFail($id_stok_keluar),
+            'produk' => Produk::all()
+        ];
+        return view('admin.stokkeluar.edit', $data);
+    }
 }

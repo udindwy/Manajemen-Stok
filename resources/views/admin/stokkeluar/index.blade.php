@@ -34,7 +34,8 @@
                                 <td>{{ $item->jumlah }}</td>
                                 <td>{{ \Carbon\Carbon::parse($item->tanggal_keluar)->format('Y-m-d H:i:s') }}</td>
                                 <td class="text-center">
-                                    <a href="#" class="btn btn-sm btn-warning">
+                                    <a href="{{ route('stokkeluarEdit', $item->id_stok_keluar) }}"
+                                        class="btn btn-sm btn-warning">
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     <a href="#" class="btn btn-sm btn-danger">

@@ -43,7 +43,8 @@
                                     </td>
                                     <td>{{ $item->dibuat_pada }}</td>
                                     <td class="text-center">
-                                        <a href="#" class="btn btn-sm btn-warning">
+                                        <a href="{{ route('userEdit', $item->id_pengguna) }}"
+                                            class="btn btn-sm btn-warning">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         <a href="#" class="btn btn-sm btn-danger">

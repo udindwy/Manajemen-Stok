@@ -34,7 +34,8 @@
                                 <td class="text-center">{{ $item->jumlah }}</td>
                                 <td class="text-center">{{ $item->tanggal_masuk }}</td>
                                 <td class="text-center">
-                                    <a href="#" class="btn btn-sm btn-warning">
+                                    <a href="{{ route('stokmasukEdit', $item->id_stok_masuk) }}"
+                                        class="btn btn-sm btn-warning">
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     <a href="#" class="btn btn-sm btn-danger">

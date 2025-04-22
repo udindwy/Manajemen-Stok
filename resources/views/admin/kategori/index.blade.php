@@ -30,7 +30,8 @@
                                 <td class="text-left">{{ $item->nama_kategori }}</td>
                                 <td>{{ $item->dibuat_pada }}</td>
                                 <td>
-                                    <a href="#" class="btn btn-sm btn-warning">
+                                    <a href="{{ route('kategoriEdit', $item->id_kategori) }}"
+                                        class="btn btn-sm btn-warning">
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     <a href="#" class="btn btn-sm btn-danger">

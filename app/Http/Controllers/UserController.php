@@ -54,4 +54,14 @@ class UserController extends Controller
 
         return redirect()->route('user')->with('success', 'Pengguna berhasil ditambahkan');
     }
+
+    public function edit($id_pengguna)
+    {
+        $data = [
+            'title' => 'Edit Pengguna',
+            'MUser' => 'active',
+            'pengguna' => Pengguna::findOrFail($id_pengguna),
+        ];
+        return view('admin.user.edit', $data);
+    }
 }

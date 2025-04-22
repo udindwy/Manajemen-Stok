@@ -60,4 +60,15 @@ class StokMasukController extends Controller
 
         return redirect()->route('stokmasuk')->with('success', 'Stok masuk berhasil ditambahkan');
     }
+
+    public function edit($id_stok_masuk)
+    {
+        $data = [
+            'title' => 'Edit Stok Masuk',
+            'MMasuk' => 'active',
+            'stokMasuk' => StokMasuk::findOrFail($id_stok_masuk),
+            'produk' => Produk::all(),
+        ];
+        return view('admin.stokmasuk.edit', $data);
+    }
 }
