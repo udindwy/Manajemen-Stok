@@ -14,12 +14,9 @@
     </div>
     <div class="card-body">
         <form
-            action="{{ isset($stokKeluar) ? route('stokkeluarEdit', $stokKeluar->id_stok_keluar) : route('stokkeluarStore') }}"
+            action="{{ isset($stokKeluar) ? route('stokkeluarUpdate', $stokKeluar->id_stok_keluar) : route('stokkeluarStore') }}"
             method="POST">
             @csrf
-            @if (isset($stokKeluar))
-                @method('PUT')
-            @endif
 
             <div class="mb-3">
                 <label class="form-label">

@@ -38,9 +38,11 @@
                                         class="btn btn-sm btn-warning">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <a href="#" class="btn btn-sm btn-danger">
+                                    <button class="btn btn-sm btn-danger" data-toggle="modal"
+                                        data-target="#modalHapusStokMasuk{{ $item->id_stok_masuk }}">
                                         <i class="fas fa-trash"></i>
-                                    </a>
+                                    </button>
+                                    @include('admin.stokmasuk.modal')
                                 </td>
                             </tr>
                         @endforeach

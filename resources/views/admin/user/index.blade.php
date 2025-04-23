@@ -33,7 +33,7 @@
                                 <tr>
                                     <td class="text-center">{{ $loop->iteration }}</td>
                                     <td>{{ $item->nama }}</td>
-                                    <td>{{ $item->email }}</td>
+                                    <td><span class="badge badge-primary">{{ $item->email }}</span></td>
                                     <td class="text-center">
                                         @if ($item->peran == 'admin')
                                             <span class="badge badge-info">{{ $item->peran }}</span>
@@ -47,9 +47,11 @@
                                             class="btn btn-sm btn-warning">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <a href="#" class="btn btn-sm btn-danger">
+                                        <button class="btn btn-sm btn-danger" data-toggle="modal"
+                                            data-target="#exampleModal{{ $item->id_pengguna }}">
                                             <i class="fas fa-trash"></i>
-                                        </a>
+                                        </button>
+                                        @include('admin.user.modal')
                                     </td>
                                 </tr>
                             @endforeach

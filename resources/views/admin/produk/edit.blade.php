@@ -13,7 +13,7 @@
         </div>
     </div>
     <div class="card-body">
-        <form action="{{ route('produkStore') }}" method="post">
+        <form action="{{ route('produkUpdate', $produk->id_produk) }}" method="post">
             @csrf
             <div class="row mb-2">
                 <div class="col-xl-6 mb-2">

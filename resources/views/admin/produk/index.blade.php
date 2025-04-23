@@ -42,9 +42,11 @@
                                     <a href="{{ route('produkEdit', $item->id_produk) }}" class="btn btn-sm btn-warning">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <a href="#" class="btn btn-sm btn-danger">
+                                    <button class="btn btn-sm btn-danger" data-toggle="modal"
+                                        data-target="#modalHapusProduk{{ $item->id_produk }}">
                                         <i class="fas fa-trash"></i>
-                                    </a>
+                                    </button>
+                                    @include('admin.produk.modal')
                                 </td>
                             </tr>
                         @endforeach

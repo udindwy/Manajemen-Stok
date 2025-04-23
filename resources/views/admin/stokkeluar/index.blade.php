@@ -38,14 +38,15 @@
                                         class="btn btn-sm btn-warning">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <a href="#" class="btn btn-sm btn-danger">
+                                    <button class="btn btn-sm btn-danger" data-toggle="modal"
+                                        data-target="#modalHapusStokKeluar{{ $item->id_stok_keluar }}">
                                         <i class="fas fa-trash"></i>
-                                    </a>
+                                    </button>
+                                    @include('admin.stokkeluar.modal')
                                 </td>
                             </tr>
                         @endforeach
                     </tbody>
-
                 </table>
             </div>
         </div>

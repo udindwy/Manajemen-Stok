@@ -34,10 +34,10 @@
                                         class="btn btn-sm btn-warning">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <a href="#" class="btn btn-sm btn-danger">
+                                    <button class="btn btn-sm btn-danger" data-toggle="modal"
+                                        data-target="#modalHapusKategori{{ $item->id_kategori }}">
                                         <i class="fas fa-trash"></i>
-                                    </a>
-                                </td>
+                                    </button @include('admin.kategori.modal') </td>
                             </tr>
                         @endforeach
                     </tbody>
