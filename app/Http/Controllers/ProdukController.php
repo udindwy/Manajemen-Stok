@@ -12,6 +12,7 @@ class ProdukController extends Controller
     public function index()
     {
         $user = Auth::user();
+        $produk = Produk::with('kategori')->get();
         if ($user->peran == 'admin') {
             $data = [
                 'title' => 'Produk',
@@ -23,6 +24,7 @@ class ProdukController extends Controller
             $data = [
                 'title' => 'Produk',
                 "MProdukKaryawan" => "active",
+                'produk'  => $produk,
             ];
             return view('pengguna.produk.index', $data);
         }

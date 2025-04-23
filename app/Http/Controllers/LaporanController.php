@@ -6,19 +6,29 @@ use App\Models\StokMasuk;
 use App\Models\StokKeluar;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Auth;
 
 class LaporanController extends Controller
 {
     public function mutasiStok()
     {
+        $user = Auth::user();
+
         $data = [
             'title' => 'Laporan',
-            "MLaporan" => "active",
+            $user->peran == 'admin' ? "MLaporan" : "MLaporanKaryawan" => "active",
         ];
-        $stokMasuk = StokMasuk::with('produk')->get();
-        $stokKeluar = StokKeluar::with('produk')->get();
 
-        // Gabung data mutasi masuk dan keluar jadi satu koleksi
+        if ($user->peran == 'admin') {
+            $stokMasuk = StokMasuk::with('produk')->get();
+            $stokKeluar = StokKeluar::with(['produk', 'pengguna'])->get();
+        } else {
+            $stokMasuk = collect(); // pengguna biasa tidak lihat stok masuk
+            $stokKeluar = StokKeluar::with(['produk', 'pengguna'])
+                ->where('id_pengguna', $user->id_pengguna)
+                ->get();
+        }
+
         $mutasi = collect();
 
         foreach ($stokMasuk as $masuk) {
@@ -28,6 +38,7 @@ class LaporanController extends Controller
                 'jenis' => 'Stok Masuk',
                 'jumlah' => $masuk->jumlah,
                 'sisa_stok' => $masuk->produk->stok,
+                'nama_pengguna' => '-', // stok masuk tidak punya pengguna
             ]);
         }
 
@@ -38,10 +49,10 @@ class LaporanController extends Controller
                 'jenis' => 'Stok Keluar',
                 'jumlah' => $keluar->jumlah,
                 'sisa_stok' => $keluar->produk->stok,
+                'nama_pengguna' => $keluar->pengguna->nama ?? '-',
             ]);
         }
 
-        // Urutkan berdasarkan tanggal
         $mutasi = $mutasi->sortBy('tanggal');
 
         return view('admin.laporan.mutasi_stok', $data, compact('mutasi'));
@@ -49,8 +60,17 @@ class LaporanController extends Controller
 
     public function exportMutasiStokPDF()
     {
-        $stokMasuk = StokMasuk::with('produk')->get();
-        $stokKeluar = StokKeluar::with('produk')->get();
+        $user = Auth::user();
+
+        if ($user->peran == 'admin') {
+            $stokMasuk = StokMasuk::with('produk')->get();
+            $stokKeluar = StokKeluar::with(['produk', 'pengguna'])->get();
+        } else {
+            $stokMasuk = collect(); // pengguna biasa tidak lihat stok masuk
+            $stokKeluar = StokKeluar::with(['produk', 'pengguna'])
+                ->where('id_pengguna', $user->id_pengguna)
+                ->get();
+        }
 
         $mutasi = collect();
 
@@ -61,6 +81,7 @@ class LaporanController extends Controller
                 'jenis' => 'Stok Masuk',
                 'jumlah' => $masuk->jumlah,
                 'sisa_stok' => $masuk->produk->stok,
+                'nama_pengguna' => '-', // stok masuk tidak punya pengguna
             ]);
         }
 
@@ -71,6 +92,7 @@ class LaporanController extends Controller
                 'jenis' => 'Stok Keluar',
                 'jumlah' => $keluar->jumlah,
                 'sisa_stok' => $keluar->produk->stok,
+                'nama_pengguna' => $keluar->pengguna->nama ?? '-',
             ]);
         }
 

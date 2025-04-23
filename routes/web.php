@@ -33,6 +33,8 @@ Route::middleware('checkLogin')->group(function () {
     Route::get('stokkeluar', [StokKeluarController::class, 'index'])->name('stokkeluar');
     Route::get('stokkeluar/create', [StokKeluarController::class, 'create'])->name('stokkeluarCreate');
     Route::post('stokkeluar/store', [StokKeluarController::class, 'store'])->name('stokkeluarStore');
+    Route::get('mutasi_stok', [LaporanController::class, 'mutasiStok'])->name('laporan.mutasi_stok');
+    Route::get('mutasi_stok_pdf', [LaporanController::class, 'exportMutasiStokPDF'])->name('laporan.mutasi_stok_pdf');
 
 
 
@@ -68,10 +70,6 @@ Route::middleware('checkLogin')->group(function () {
 
         // Route Notifikasi Stok Minim
         Route::get('stokminim', [NotifikasiController::class, 'index'])->name('stokminim');
-
-        // Route Laporan
-        Route::get('mutasi_stok', [LaporanController::class, 'mutasiStok'])->name('laporan.mutasi_stok');
-        Route::get('mutasi_stok_pdf', [LaporanController::class, 'exportMutasiStokPDF'])->name('laporan.mutasi_stok_pdf');
 
         // Route Kelola User
         Route::get('user', [UserController::class, 'index'])->name('user');

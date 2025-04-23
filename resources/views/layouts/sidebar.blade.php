@@ -102,6 +102,13 @@
                         <span>Stok Keluar</span>
                     </a>
                 </li>
+
+                <li class="nav-item {{ $MLaporanKaryawan ?? '' }}">
+                    <a class="nav-link" href="{{ route('laporan.mutasi_stok') }}">
+                        <i class="fas fa-fw fa-chart-bar"></i>
+                        <span>Laporan</span>
+                    </a>
+                </li>
             @endif
 
             <!-- Divider -->\
