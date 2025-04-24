@@ -15,13 +15,13 @@ class StokMasukSeeder extends Seeder
                 'id_produk' => 1,
                 'jumlah' => 30,
                 'id_pengguna' => 1,
-                'tanggal_masuk' => Carbon::parse('2025-04-16 09:00:00'),
+                'tanggal_masuk' => Carbon::now(),
             ],
             [
                 'id_produk' => 2,
                 'jumlah' => 50,
                 'id_pengguna' => 2,
-                'tanggal_masuk' => Carbon::parse('2025-04-17 10:30:00'),
+                'tanggal_masuk' => Carbon::now(),
             ]
         ]);
     }

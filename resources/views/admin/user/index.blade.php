@@ -33,7 +33,11 @@
                                 <tr>
                                     <td class="text-center">{{ $loop->iteration }}</td>
                                     <td>{{ $item->nama }}</td>
-                                    <td><span class="badge badge-primary">{{ $item->email }}</span></td>
+                                   <td>
+    <span class="badge {{ $item->peran == 'admin' ? 'badge-info' : 'badge-primary' }}">
+        {{ $item->email }}
+    </span>
+</td>
                                     <td class="text-center">
                                         @if ($item->peran == 'admin')
                                             <span class="badge badge-info">{{ $item->peran }}</span>

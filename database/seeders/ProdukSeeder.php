@@ -29,7 +29,7 @@ class ProdukSeeder extends Seeder
             ],
             [
                 'nama_produk' => 'Ayam Goreng',
-                'id_kategori' => 1, 
+                'id_kategori' => 1,
                 'stok' => 30,
                 'stok_minimal' => 5,
                 'deskripsi' => 'Ayam Goreng dengan rasa gurih dan renyah',

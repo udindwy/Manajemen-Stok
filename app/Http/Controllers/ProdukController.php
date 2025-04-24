@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Produk;
 use App\Models\Kategori;
+use App\Models\StokMasuk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 

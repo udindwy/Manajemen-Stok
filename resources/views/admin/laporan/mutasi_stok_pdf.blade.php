@@ -11,7 +11,7 @@
         }
 
         table {
-            width: 100%;
+            width: 100%;gg
             border-collapse: collapse;
             margin-top: 10px;
         }
