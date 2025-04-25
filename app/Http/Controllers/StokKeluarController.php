@@ -29,16 +29,6 @@ class StokKeluarController extends Controller
         }
     }
 
-    // public function create()
-    // {
-    //     $data = [
-    //         'title' => 'Tambah Stok Keluar',
-    //         'MKeluar' => 'active',
-    //         'produk' => Produk::all()
-    //     ];
-    //     return view('admin.stokkeluar.create', $data);
-    // }
-
     public function create()
     {
         $produk = Produk::all();
