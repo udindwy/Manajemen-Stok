@@ -10,15 +10,19 @@ use Symfony\Component\HttpFoundation\Response;
 class isLogin
 {
     /**
-     * Handle an incoming request.
+     * menangani permintaan yang masuk.
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
+        // memeriksa apakah pengguna sudah login
         if (Auth::check()) {
-            return redirect()->route('dashboard')->with('success', 'Anda Sudah Login');
+            // jika sudah login, alihkan ke halaman dashboard dengan pesan sukses
+            return redirect()->route('dashboard')->with('success', 'Anda sudah login');
         }
+
+        // jika pengguna belum login, lanjutkan permintaan ke controller berikutnya
         return $next($request);
     }
 }

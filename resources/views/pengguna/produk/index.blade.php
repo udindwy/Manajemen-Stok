@@ -16,7 +16,6 @@
                             <th>Nama Produk</th>
                             <th>Kategori</th>
                             <th>Stok</th>
-                            <th>Stok Minimal</th>
                             <th>Deskripsi</th>
                             <th>Dibuat Pada</th>
                         </tr>
@@ -29,7 +28,6 @@
                                 <td>{{ $item->nama_produk }}</td>
                                 <td>{{ $item->kategori->nama_kategori ?? '-' }}</td>
                                 <td>{{ $item->stok }}</td>
-                                <td>{{ $item->stok_minimal }}</td>
                                 <td>{{ $item->deskripsi }}</td>
                                 <td>{{ $item->dibuat_pada }}</td>
                             </tr>

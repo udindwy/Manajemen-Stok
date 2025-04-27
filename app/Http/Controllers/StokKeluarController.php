@@ -21,7 +21,7 @@ class StokKeluarController extends Controller
             return view('admin.stokkeluar.index', $data);
         } else {
             $data = [
-                'title' => 'Stok Keluar',
+                'title' => 'Transaksi',
                 "MStokKaryawan" => "active",
                 'produk' => Produk::all()  // Tambahkan baris ini
             ];
