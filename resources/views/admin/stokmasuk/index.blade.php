@@ -21,17 +21,19 @@
                             <th>Nama Produk</th>
                             <th>Kategori</th>
                             <th>Jumlah Masuk</th>
+                            <th>Nama Pengguna</th>
                             <th>Tanggal Masuk</th>
                             <th><i class="fas fa-cog"></i></th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($stokMasuk as $item)
-                            <tr>
+                            <tr class="text-center">
                                 <td class="text-center">{{ $loop->iteration }}</td>
                                 <td>{{ $item->produk->nama_produk }}</td>
                                 <td>{{ $item->produk->kategori->nama_kategori }}</td>
                                 <td class="text-center">{{ $item->jumlah }}</td>
+                                <td>{{ $item->pengguna->nama }}</td>
                                 <td class="text-center">{{ $item->tanggal_masuk }}</td>
                                 <td class="text-center">
                                     <a href="{{ route('stokmasukEdit', $item->id_stok_masuk) }}"

@@ -26,9 +26,10 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($mutasi as $key => $item)
+                        @php $no = 1; @endphp
+                        @foreach ($mutasi as $item)
                             <tr>
-                                <td>{{ $key + 1 }}</td>
+                                <td>{{ $no++ }}</td>
                                 <td>{{ $item['nama_produk'] }}</td>
                                 <td>{{ $item['tanggal'] }}</td>
                                 <td>{{ $item['jenis'] }}</td>

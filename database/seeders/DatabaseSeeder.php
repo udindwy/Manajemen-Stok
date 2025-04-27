@@ -13,7 +13,6 @@ class DatabaseSeeder extends Seeder
             PenggunaSeeder::class,
             KategoriSeeder::class,
             ProdukSeeder::class,
-            StokMasukSeeder::class,
         ]);
     }
 }

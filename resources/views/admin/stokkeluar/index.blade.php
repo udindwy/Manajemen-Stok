@@ -21,17 +21,19 @@
                             <th>Nama Produk</th>
                             <th>Kategori</th>
                             <th>Jumlah Keluar</th>
+                            <th>Nama Pengguna</th>
                             <th>Tanggal Keluar</th>
                             <th><i class="fas fa-cog"></i></th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($stokKeluar as $item)
-                            <tr>
+                            <tr class="text-center">
                                 <td class="text-center">{{ $loop->iteration }}</td>
                                 <td>{{ $item->produk->nama_produk }}</td>
                                 <td>{{ $item->produk->kategori->nama_kategori }}</td>
                                 <td>{{ $item->jumlah }}</td>
+                                <td>{{ $item->pengguna->nama }}</td>
                                 <td>{{ \Carbon\Carbon::parse($item->tanggal_keluar)->format('Y-m-d H:i:s') }}</td>
                                 <td class="text-center">
                                     <a href="{{ route('stokkeluarEdit', $item->id_stok_keluar) }}"
