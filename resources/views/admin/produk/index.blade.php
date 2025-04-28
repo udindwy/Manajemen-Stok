@@ -34,10 +34,10 @@
                                 <td class="text-center">{{ $loop->iteration }}</td>
                                 <td>{{ $item->nama_produk }}</td>
                                 <td>{{ $item->kategori->nama_kategori }}</td>
-                                <td>{{ $item->stok }}</td>
-                                <td>{{ $item->stok_minimal }}</td>
+                                <td class="text-center">{{ $item->stok }}</td>
+                                <td class="text-center">{{ $item->stok_minimal }}</td>
                                 <td>{{ $item->deskripsi }}</td>
-                                <td>{{ $item->dibuat_pada }}</td>
+                                <td class="text-center">{{ $item->dibuat_pada }}</td>
                                 <td class="text-center">
                                     <a href="{{ route('produkEdit', $item->id_produk) }}" class="btn btn-sm btn-warning">
                                         <i class="fas fa-edit"></i>

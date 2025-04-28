@@ -9,10 +9,12 @@ use Illuminate\Support\Facades\Auth;
 
 class StokKeluarController extends Controller
 {
+    // fungsi untuk menampilkan halaman stok keluar
     public function index()
     {
         $user = Auth::user();
         if ($user->peran == 'admin') {
+            // jika admin, tampilkan semua data stok keluar
             $data = [
                 'title' => 'Stok Keluar',
                 "MKeluar" => "active",
@@ -20,15 +22,17 @@ class StokKeluarController extends Controller
             ];
             return view('admin.stokkeluar.index', $data);
         } else {
+            // jika bukan admin, tampilkan halaman tambah stok keluar
             $data = [
-                'title' => 'Transaksi',
+                'title' => 'Stok Keluar',
                 "MStokKaryawan" => "active",
-                'produk' => Produk::all()  // Tambahkan baris ini
+                'produk' => Produk::all()  // ambil semua produk
             ];
             return view('pengguna.stokkeluar.create', $data);
         }
     }
 
+    // fungsi untuk menampilkan form tambah stok keluar
     public function create()
     {
         $produk = Produk::all();
@@ -44,8 +48,10 @@ class StokKeluarController extends Controller
         }
     }
 
+    // fungsi untuk menyimpan data stok keluar baru
     public function store(Request $request)
     {
+        // validasi input
         $request->validate([
             'id_produk' => 'required|exists:produk,id_produk',
             'jumlah' => 'required|integer|min:1',
@@ -62,6 +68,7 @@ class StokKeluarController extends Controller
 
         $produk = Produk::findOrFail($request->id_produk);
 
+        // cek stok produk mencukupi
         if ($produk->stok < $request->jumlah) {
             return redirect()->back()->withErrors(['jumlah' => 'Stok tidak mencukupi untuk dikeluarkan'])->withInput();
         }
@@ -81,6 +88,7 @@ class StokKeluarController extends Controller
         return redirect()->route('stokkeluar')->with('success', 'Stok keluar berhasil ditambahkan');
     }
 
+    // fungsi untuk menampilkan form edit stok keluar
     public function edit($id_stok_keluar)
     {
         $data = [
@@ -92,8 +100,10 @@ class StokKeluarController extends Controller
         return view('admin.stokkeluar.edit', $data);
     }
 
+    // fungsi untuk memperbarui data stok keluar
     public function update(Request $request, $id_stok_keluar)
     {
+        // validasi input
         $request->validate([
             'id_produk' => 'required|exists:produk,id_produk',
             'jumlah' => 'required|integer|min:1',
@@ -108,42 +118,43 @@ class StokKeluarController extends Controller
             'tanggal_keluar.date' => 'Format tanggal tidak valid',
         ]);
 
-        // Ambil data stok_keluar lama
+        // ambil data stok_keluar lama
         $stokKeluar = StokKeluar::findOrFail($id_stok_keluar);
         $produk = Produk::findOrFail($request->id_produk);
 
-        // Kembalikan stok sebelumnya terlebih dahulu (rollback stok lama)
+        // kembalikan stok produk sebelumnya
         $produk->stok += $stokKeluar->jumlah;
 
-        // Cek apakah stok mencukupi untuk jumlah baru
+        // cek stok mencukupi untuk jumlah baru
         if ($produk->stok < $request->jumlah) {
             return redirect()->back()->withErrors(['jumlah' => 'Stok tidak mencukupi untuk dikeluarkan'])->withInput();
         }
 
-        // Update data stok_keluar
+        // update data stok_keluar
         $stokKeluar->id_produk = $request->id_produk;
         $stokKeluar->jumlah = $request->jumlah;
         $stokKeluar->tanggal_keluar = $request->tanggal_keluar;
         $stokKeluar->id_pengguna = Auth::id();
         $stokKeluar->save();
 
-        // Update stok produk
+        // update stok produk
         $produk->stok -= $request->jumlah;
         $produk->save();
 
         return redirect()->route('stokkeluar')->with('success', 'Stok keluar berhasil diupdate');
     }
 
+    // fungsi untuk menghapus data stok keluar
     public function destroy($id_stok_keluar)
     {
         $stokKeluar = StokKeluar::findOrFail($id_stok_keluar);
         $produk = Produk::findOrFail($stokKeluar->id_produk);
 
-        // Kembalikan stok produk
+        // kembalikan stok produk
         $produk->stok += $stokKeluar->jumlah;
         $produk->save();
 
-        // Hapus data stok_keluar
+        // hapus data stok_keluar
         $stokKeluar->delete();
 
         return redirect()->route('stokkeluar')->with('success', 'Stok keluar berhasil dihapus');

@@ -41,8 +41,8 @@ class LaporanController extends Controller
                 'tanggal' => $masuk->tanggal_masuk,
                 'jenis' => 'Stok Masuk',
                 'jumlah' => $masuk->jumlah,
-                'sisa_stok' => $masuk->produk->stok,
-                'nama_pengguna' => '-', // tidak ada pengguna
+                'sisa_stok' => $user->peran == 'admin' ? $masuk->produk->stok : '-',
+                'nama_pengguna' => $masuk->pengguna->nama ?? 'Admin', // Ubah ini untuk menampilkan nama admin
             ]);
         }
 
@@ -53,8 +53,8 @@ class LaporanController extends Controller
                 'tanggal' => $keluar->tanggal_keluar,
                 'jenis' => 'Stok Keluar',
                 'jumlah' => $keluar->jumlah,
-                'sisa_stok' => $keluar->produk->stok,
-                'nama_pengguna' => $keluar->pengguna->nama ?? '-', // nama pengguna jika ada
+                'sisa_stok' => $user->peran == 'admin' ? $keluar->produk->stok : '-',
+                'nama_pengguna' => $keluar->pengguna->nama ?? '-',
             ]);
         }
 
@@ -89,20 +89,19 @@ class LaporanController extends Controller
                 'tanggal' => $masuk->tanggal_masuk,
                 'jenis' => 'Stok Masuk',
                 'jumlah' => $masuk->jumlah,
-                'sisa_stok' => $masuk->produk->stok,
-                'nama_pengguna' => '-', // tidak punya pengguna
+                'sisa_stok' => $user->peran == 'admin' ? $masuk->produk->stok : '-',
+                'nama_pengguna' => $masuk->pengguna->nama ?? 'Admin',
             ]);
         }
 
-        // stok keluar
         foreach ($stokKeluar as $keluar) {
             $mutasi->push([
                 'nama_produk' => $keluar->produk->nama_produk,
                 'tanggal' => $keluar->tanggal_keluar,
                 'jenis' => 'Stok Keluar',
                 'jumlah' => $keluar->jumlah,
-                'sisa_stok' => $keluar->produk->stok,
-                'nama_pengguna' => $keluar->pengguna->nama ?? '-', // jika null, tampilkan '-'
+                'sisa_stok' => $user->peran == 'admin' ? $keluar->produk->stok : '-',
+                'nama_pengguna' => $keluar->pengguna->nama ?? '-',
             ]);
         }
 

@@ -33,19 +33,19 @@
                                 <tr>
                                     <td class="text-center">{{ $loop->iteration }}</td>
                                     <td>{{ $item->nama }}</td>
-                                   <td>
-    <span class="badge {{ $item->peran == 'admin' ? 'badge-info' : 'badge-primary' }}">
-        {{ $item->email }}
-    </span>
-</td>
-                                    <td class="text-center">
+                                    <td>
+                                        <span class="badge {{ $item->peran == 'admin' ? 'badge-info' : 'badge-primary' }}">
+                                            {{ $item->email }}
+                                        </span>
+                                    </td>
+                                    <td>
                                         @if ($item->peran == 'admin')
                                             <span class="badge badge-info">{{ $item->peran }}</span>
                                         @elseif ($item->peran == 'pengguna')
                                             <span class="badge badge-primary">{{ $item->peran }}</span>
                                         @endif
                                     </td>
-                                    <td>{{ $item->dibuat_pada }}</td>
+                                    <td class="text-center">{{ $item->dibuat_pada }}</td>
                                     <td class="text-center">
                                         <a href="{{ route('userEdit', $item->id_pengguna) }}"
                                             class="btn btn-sm btn-warning">

@@ -12,6 +12,7 @@
                 <i class="fas fa-plus mr-2"></i>Tambah Stok Keluar
             </a>
         </div>
+
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
@@ -26,15 +27,17 @@
                             <th><i class="fas fa-cog"></i></th>
                         </tr>
                     </thead>
+
                     <tbody>
                         @foreach ($stokKeluar as $item)
-                            <tr class="text-center">
+                            <tr>
                                 <td class="text-center">{{ $loop->iteration }}</td>
-                                <td>{{ $item->produk->nama_produk }}</td>
-                                <td>{{ $item->produk->kategori->nama_kategori }}</td>
-                                <td>{{ $item->jumlah }}</td>
-                                <td>{{ $item->pengguna->nama }}</td>
-                                <td>{{ \Carbon\Carbon::parse($item->tanggal_keluar)->format('Y-m-d H:i:s') }}</td>
+                                <td class="text-left">{{ $item->produk->nama_produk }}</td>
+                                <td class="text-left">{{ $item->produk->kategori->nama_kategori }}</td>
+                                <td class="text-center">{{ $item->jumlah }}</td>
+                                <td class="text-left">{{ $item->pengguna->nama }}</td>
+                                <td class="text-center">
+                                    {{ \Carbon\Carbon::parse($item->tanggal_keluar)->format('Y-m-d H:i:s') }}</td>
                                 <td class="text-center">
                                     <a href="{{ route('stokkeluarEdit', $item->id_stok_keluar) }}"
                                         class="btn btn-sm btn-warning">
@@ -49,6 +52,7 @@
                             </tr>
                         @endforeach
                     </tbody>
+
                 </table>
             </div>
         </div>

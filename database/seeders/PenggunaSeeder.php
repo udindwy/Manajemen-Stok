@@ -17,15 +17,22 @@ class PenggunaSeeder extends Seeder
     {
         DB::table('pengguna')->insert([
             [
-                'nama' => 'Admin',
+                'nama' => 'admin',
                 'email' => 'admin@example.com',
                 'password' => Hash::make('admin123'),
                 'peran' => 'admin',
                 'dibuat_pada' => Carbon::now(),
             ],
             [
-                'nama' => 'Karyawan',
+                'nama' => 'karyawan1',
                 'email' => 'karyawan1@example.com',
+                'password' => Hash::make('karyawan123'),
+                'peran' => 'pengguna',
+                'dibuat_pada' => Carbon::now(),
+            ],
+            [
+                'nama' => 'karyawan2',
+                'email' => 'karyawan2@example.com',
                 'password' => Hash::make('karyawan123'),
                 'peran' => 'pengguna',
                 'dibuat_pada' => Carbon::now(),

@@ -2,55 +2,59 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use App\Models\Produk;
 use Carbon\Carbon;
+use Illuminate\Database\Seeder;
 
 class ProdukSeeder extends Seeder
 {
     public function run()
     {
-        DB::table('produk')->insert([
+        $produk = [
             [
-                'nama_produk' => 'Nasi Goreng Spesial',
+                'nama_produk' => 'Beras',
                 'id_kategori' => 1,
-                'stok' => 50,
-                'stok_minimal' => 10,
-                'deskripsi' => 'Nasi Goreng dengan berbagai topping lezat',
+                'stok' => 100,
+                'stok_minimal' => 20,
+                'deskripsi' => 'Beras premium per kg',
+                'dibuat_pada' => Carbon::now(),
+            ],
+            [
+                'nama_produk' => 'Mie Instan',
+                'id_kategori' => 1,
+                'stok' => 150,
+                'stok_minimal' => 30,
+                'deskripsi' => 'Mie instan berbagai rasa',
                 'dibuat_pada' => Carbon::now(),
             ],
             [
                 'nama_produk' => 'Teh Botol',
                 'id_kategori' => 2,
-                'stok' => 100,
-                'stok_minimal' => 10,
-                'deskripsi' => 'Teh botol dengan rasa manis alami',
-                'dibuat_pada' => Carbon::now(),
-            ],
-            [
-                'nama_produk' => 'Ayam Goreng',
-                'id_kategori' => 1,
-                'stok' => 30,
-                'stok_minimal' => 10,
-                'deskripsi' => 'Ayam Goreng dengan rasa gurih dan renyah',
-                'dibuat_pada' => Carbon::now(),
-            ],
-            [
-                'nama_produk' => 'Es Teh Manis',
-                'id_kategori' => 2,
                 'stok' => 50,
-                'stok_minimal' => 15,
-                'deskripsi' => 'Es teh manis dengan rasa segar',
+                'stok_minimal' => 10,
+                'deskripsi' => 'Minuman teh dalam botol',
                 'dibuat_pada' => Carbon::now(),
             ],
             [
-                'nama_produk' => 'Mie Goreng',
-                'id_kategori' => 1,
-                'stok' => 75,
-                'stok_minimal' => 20,
-                'deskripsi' => 'Mie Goreng dengan bumbu spesial',
+                'nama_produk' => 'Sabun Mandi',
+                'id_kategori' => 4,
+                'stok' => 10,
+                'stok_minimal' => 15,
+                'deskripsi' => 'Sabun mandi batangan',
                 'dibuat_pada' => Carbon::now(),
             ],
-        ]);
+            [
+                'nama_produk' => 'Pulpen',
+                'id_kategori' => 5,
+                'stok' => 100,
+                'stok_minimal' => 20,
+                'deskripsi' => 'Pulpen hitam',
+                'dibuat_pada' => Carbon::now(),
+            ],
+        ];
+
+        foreach ($produk as $p) {
+            Produk::create($p);
+        }
     }
 }

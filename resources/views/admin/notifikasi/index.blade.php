@@ -30,15 +30,20 @@
                             <th>Status</th>
                         </tr>
                     </thead>
+
                     <tbody>
                         @foreach ($produkMinim as $item)
-                            <tr class="text-center">
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ $item->nama_produk }}</td>
-                                <td>{{ $item->kategori->nama_kategori }}</td>
-                                <td><span class="badge badge-danger">{{ $item->stok }}</span></td>
-                                <td>{{ $item->stok_minimal }}</td>
-                                <td><span class="badge badge-warning">Stok Minim</span></td>
+                            <tr>
+                                <td class="text-center">{{ $loop->iteration }}</td>
+                                <td class="text-left">{{ $item->nama_produk }}</td>
+                                <td class="text-left">{{ $item->kategori->nama_kategori }}</td>
+                                <td class="text-center">
+                                    <span>{{ $item->stok }}</span>
+                                </td>
+                                <td class="text-center">{{ $item->stok_minimal }}</td>
+                                <td class="text-center">
+                                    <span class="badge badge-warning">Stok Minim</span>
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>
