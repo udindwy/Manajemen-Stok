@@ -19,6 +19,7 @@
                     <thead class="bg-primary text-white text-center">
                         <tr>
                             <th>No</th>
+                            <th>Kode Produk</th>
                             <th>Nama Produk</th>
                             <th>Kategori</th>
                             <th>Jumlah Keluar</th>
@@ -27,11 +28,11 @@
                             <th><i class="fas fa-cog"></i></th>
                         </tr>
                     </thead>
-
                     <tbody>
                         @foreach ($stokKeluar as $item)
                             <tr>
                                 <td class="text-center">{{ $loop->iteration }}</td>
+                                <td class="text-center">{{ $item->produk->kode_produk }}</td>
                                 <td class="text-left">{{ $item->produk->nama_produk }}</td>
                                 <td class="text-left">{{ $item->produk->kategori->nama_kategori }}</td>
                                 <td class="text-center">{{ $item->jumlah }}</td>

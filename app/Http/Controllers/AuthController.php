@@ -22,9 +22,9 @@ class AuthController extends Controller
             'email' => 'required',
             'password' => 'required|min:8',
         ], [
-            'email.required' => 'email wajib diisi!',
-            'password.required' => 'password wajib diisi!',
-            'password.min' => 'password minimal 8 karakter!',
+            'email.required' => 'Email wajib diisi!',
+            'password.required' => 'Password wajib diisi!',
+            'password.min' => 'Password minimal 8 karakter!',
         ]);
 
         // menyimpan input ke dalam array untuk proses autentikasi
@@ -36,10 +36,10 @@ class AuthController extends Controller
         // melakukan autentikasi menggunakan data yang diberikan
         if (Auth::attempt($data)) {
             // jika berhasil login, arahkan ke halaman dashboard
-            return redirect()->route('dashboard')->with('success', 'anda berhasil login!');
+            return redirect()->route('dashboard')->with('success', 'Anda berhasil login!');
         } else {
             // jika gagal login, kembali ke halaman login dengan pesan error
-            return redirect()->back()->with('error', 'email atau password salah!');
+            return redirect()->back()->with('error', 'Email atau Password salah!');
         }
     }
 
@@ -49,6 +49,6 @@ class AuthController extends Controller
         // proses logout
         Auth::logout();
         // arahkan ke halaman login setelah logout
-        return redirect()->route('login')->with('success', 'anda berhasil logout!');
+        return redirect()->route('login')->with('success', 'Anda berhasil logout!');
     }
 }

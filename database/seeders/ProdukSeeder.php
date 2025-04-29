@@ -13,6 +13,7 @@ class ProdukSeeder extends Seeder
         $produk = [
             [
                 'nama_produk' => 'Beras',
+                'kode_produk' => 'PRD-0001',
                 'id_kategori' => 1,
                 'stok' => 100,
                 'stok_minimal' => 20,
@@ -21,6 +22,7 @@ class ProdukSeeder extends Seeder
             ],
             [
                 'nama_produk' => 'Mie Instan',
+                'kode_produk' => 'PRD-0002',
                 'id_kategori' => 1,
                 'stok' => 150,
                 'stok_minimal' => 30,
@@ -29,6 +31,7 @@ class ProdukSeeder extends Seeder
             ],
             [
                 'nama_produk' => 'Teh Botol',
+                'kode_produk' => 'PRD-0003',  // Diubah dari kode_barang
                 'id_kategori' => 2,
                 'stok' => 50,
                 'stok_minimal' => 10,
@@ -37,6 +40,7 @@ class ProdukSeeder extends Seeder
             ],
             [
                 'nama_produk' => 'Sabun Mandi',
+                'kode_produk' => 'PRD-0004',  // Diubah dari kode_barang
                 'id_kategori' => 4,
                 'stok' => 10,
                 'stok_minimal' => 15,
@@ -45,6 +49,7 @@ class ProdukSeeder extends Seeder
             ],
             [
                 'nama_produk' => 'Pulpen',
+                'kode_produk' => 'PRD-0005',  // Diubah dari kode_barang
                 'id_kategori' => 5,
                 'stok' => 100,
                 'stok_minimal' => 20,

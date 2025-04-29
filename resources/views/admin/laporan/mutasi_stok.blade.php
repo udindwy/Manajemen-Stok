@@ -20,6 +20,7 @@
                     <thead class="bg-primary text-white text-center">
                         <tr>
                             <th>No</th>
+                            <th>Kode Produk</th>
                             <th>Nama Produk</th>
                             <th>Tanggal</th>
                             @if (Auth::user()->peran == 'admin')
@@ -37,6 +38,7 @@
                         @foreach ($mutasi as $item)
                             <tr>
                                 <td class="text-center">{{ $no++ }}</td>
+                                <td class="text-center">{{ $item['kode_produk'] }}</td>
                                 <td class="text-left">{{ $item['nama_produk'] }}</td>
                                 <td class="text-center">{{ $item['tanggal'] }}</td>
                                 @if (Auth::user()->peran == 'admin')

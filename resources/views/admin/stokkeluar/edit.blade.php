@@ -28,7 +28,7 @@
                     @foreach ($produk as $p)
                         <option value="{{ $p->id_produk }}"
                             {{ old('id_produk', $stokKeluar->id_produk ?? '') == $p->id_produk ? 'selected' : '' }}>
-                            {{ $p->nama_produk }}
+                            {{ $p->kode_produk }} - {{ $p->nama_produk }}
                         </option>
                     @endforeach
                 </select>

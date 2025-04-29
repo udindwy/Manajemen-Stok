@@ -1,4 +1,4 @@
-       <!-- Modal Hapus -->
+<!-- Modal Hapus -->
        <div class="modal fade" id="modalHapusStokKeluar{{ $item->id_stok_keluar }}" tabindex="-1"
            aria-labelledby="modalHapusStokKeluarLabel{{ $item->id_stok_keluar }}" aria-hidden="true">
            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
@@ -13,6 +13,8 @@
                    </div>
                    <div class="modal-body text-left">
                        <div class="row">
+                           <div class="col-6">Kode Produk</div>
+                           <div class="col-6">: {{ $item->produk->kode_produk }}</div>
                            <div class="col-6">Produk</div>
                            <div class="col-6">: {{ $item->produk->nama_produk }}</div>
                            <div class="col-6">Jumlah Keluar</div>

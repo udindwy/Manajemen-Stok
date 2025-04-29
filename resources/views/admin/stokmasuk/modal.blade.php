@@ -13,6 +13,8 @@
             </div>
             <div class="modal-body text-left">
                 <div class="row">
+                    <div class="col-6">Kode Produk</div>
+                    <div class="col-6">: {{ $item->produk->kode_produk }}</div>
                     <div class="col-6">Produk</div>
                     <div class="col-6">: {{ $item->produk->nama_produk }}</div>
                     <div class="col-6">Jumlah Masuk</div>

@@ -26,6 +26,7 @@ class ProdukController extends Controller
                 // ambil semua data produk (tanpa relasi)
                 'produk'  => Produk::get(),
             ];
+            // tampilkan view produk untuk admin
             return view('admin.produk.index', $data);
         } else {
             // jika user bukan admin (pengguna/karyawan)
@@ -34,6 +35,7 @@ class ProdukController extends Controller
                 "MProdukKaryawan" => "active",
                 'produk'  => $produk,
             ];
+            // tampilkan view produk untuk pengguna
             return view('pengguna.produk.index', $data);
         }
     }
@@ -43,17 +45,19 @@ class ProdukController extends Controller
         // ambil semua data kategori untuk pilihan dropdown
         $kategori = Kategori::all();
 
+        // siapkan data untuk dikirim ke view
         $data = [
             'title' => 'Tambah Produk',
             'MProduk' => 'active',
             'kategori' => $kategori,
         ];
+        // tampilkan form tambah produk
         return view('admin.produk.create', $data);
     }
 
     public function store(Request $request)
     {
-        // validasi input dari form tambah produk
+        // validasi input dari form
         $request->validate([
             'nama_produk' => 'required',
             'id_kategori' => 'required',
@@ -61,18 +65,10 @@ class ProdukController extends Controller
             'stok_minimal' => 'required|integer',
             'deskripsi' => 'required|string',
         ], [
-            // pesan error custom jika validasi gagal
-            'nama_produk.required' => 'Nama produk tidak boleh kosong',
-            'id_kategori.required' => 'Kategori harus dipilih',
-            'stok.required' => 'Stok tidak boleh kosong',
-            'stok.integer' => 'Stok harus berupa angka',
-            'stok_minimal.required' => 'Stok minimal tidak boleh kosong',
-            'stok_minimal.integer' => 'Stok minimal harus berupa angka',
-            'deskripsi.string' => 'Deskripsi harus berupa teks',
-            'deskripsi.required' => 'Deskripsi tidak boleh kosong',
+            // pesan error
         ]);
 
-        // simpan data produk baru ke database
+        // buat objek produk baru
         $produk = new Produk();
         $produk->nama_produk = $request->nama_produk;
         $produk->id_kategori = $request->id_kategori;
@@ -81,28 +77,30 @@ class ProdukController extends Controller
         $produk->deskripsi = $request->deskripsi;
         $produk->save();
 
-        // kembali ke halaman produk dengan notifikasi sukses
+        // generate kode_produk otomatis
+        $produk->kode_produk = 'PRD-' . str_pad($produk->id_produk, 4, '0', STR_PAD_LEFT);
+        $produk->save();
+
+        // redirect kembali ke halaman produk dengan pesan sukses
         return redirect()->route('produk')->with('success', 'Produk berhasil ditambahkan');
     }
 
     public function edit($id_produk)
     {
-        // ambil semua data kategori
-        $kategori = Kategori::all();
-
+        // siapkan data produk dan kategori untuk form edit
         $data = [
             'title' => 'Edit Produk',
             'MProduk' => 'active',
-            'kategori' => $kategori,
-            // ambil data produk berdasarkan id
+            'kategori' => Kategori::all(),
             'produk' => Produk::findOrFail($id_produk),
         ];
+        // tampilkan form edit produk
         return view('admin.produk.edit', $data);
     }
 
     public function update(Request $request, $id_produk)
     {
-        // validasi input dari form edit produk
+        // validasi input dari form edit
         $request->validate([
             'nama_produk' => 'required',
             'id_kategori' => 'required',
@@ -110,7 +108,7 @@ class ProdukController extends Controller
             'stok_minimal' => 'required|integer',
             'deskripsi' => 'required|string',
         ], [
-            // pesan error custom
+            // pesan validasi custom
             'nama_produk.required' => 'Nama produk tidak boleh kosong',
             'id_kategori.required' => 'Kategori harus dipilih',
             'stok.required' => 'Stok tidak boleh kosong',
@@ -121,7 +119,7 @@ class ProdukController extends Controller
             'deskripsi.required' => 'Deskripsi tidak boleh kosong',
         ]);
 
-        // ambil data produk yang akan diupdate
+        // update data produk berdasarkan id
         $produk = Produk::findOrFail($id_produk);
         $produk->nama_produk = $request->nama_produk;
         $produk->id_kategori = $request->id_kategori;
@@ -130,7 +128,7 @@ class ProdukController extends Controller
         $produk->deskripsi = $request->deskripsi;
         $produk->save();
 
-        // kembali ke halaman produk dengan notifikasi sukses
+        // redirect ke halaman produk dengan notifikasi sukses
         return redirect()->route('produk')->with('success', 'Produk berhasil diupdate');
     }
 

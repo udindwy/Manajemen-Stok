@@ -23,6 +23,7 @@
                     <thead class="{{ $produkMinim->count() > 0 ? 'bg-danger' : 'bg-primary' }} text-white text-center">
                         <tr>
                             <th>No</th>
+                            <th>Kode Produk</th>
                             <th>Nama Produk</th>
                             <th>Kategori</th>
                             <th>Stok Saat Ini</th>
@@ -35,6 +36,7 @@
                         @foreach ($produkMinim as $item)
                             <tr>
                                 <td class="text-center">{{ $loop->iteration }}</td>
+                                <td class="text-center">{{ $item->kode_produk }}</td>
                                 <td class="text-left">{{ $item->nama_produk }}</td>
                                 <td class="text-left">{{ $item->kategori->nama_kategori }}</td>
                                 <td class="text-center">
