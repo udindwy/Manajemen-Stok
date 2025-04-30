@@ -2,7 +2,7 @@
 
 @section('content')
     <h1 class="h3 mb-4 text-gray-800">
-        <i class="fas fa-fw fa-users"></i>
+        <i class="fas fa-fw fa-box"></i>
         {{ $title }}
     </h1>
 
