@@ -7,6 +7,7 @@ use App\Models\Kategori;
 use App\Models\StokMasuk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class ProdukController extends Controller
 {
@@ -59,13 +60,23 @@ class ProdukController extends Controller
     {
         // validasi input dari form
         $request->validate([
-            'nama_produk' => 'required',
+            'nama_produk' => ['required', 'regex:/[a-zA-Z]/'],
             'id_kategori' => 'required',
-            'stok' => 'required|integer',
-            'stok_minimal' => 'required|integer',
+            'stok' => 'required|integer|min:0',
+            'stok_minimal' => 'required|integer|min:0',
             'deskripsi' => 'required|string',
         ], [
-            // pesan error
+            'nama_produk.required' => 'Nama produk tidak boleh kosong',
+            'nama_produk.regex' => 'Nama produk tidak boleh hanya berisi angka',
+            'id_kategori.required' => 'Kategori harus dipilih',
+            'stok.required' => 'Stok tidak boleh kosong',
+            'stok.integer' => 'Stok harus berupa angka',
+            'stok.min' => 'Stok tidak boleh kurang dari 0',
+            'stok_minimal.required' => 'Stok minimal tidak boleh kosong',
+            'stok_minimal.integer' => 'Stok minimal harus berupa angka',
+            'stok_minimal.min' => 'Stok minimal tidak boleh kurang dari 0',
+            'deskripsi.required' => 'Deskripsi tidak boleh kosong',
+            'deskripsi.string' => 'Deskripsi harus berupa teks'
         ]);
 
         // buat objek produk baru
@@ -79,9 +90,22 @@ class ProdukController extends Controller
 
         // generate kode_produk otomatis
         $produk->kode_produk = 'PRD-' . str_pad($produk->id_produk, 4, '0', STR_PAD_LEFT);
+
+        // generate QR code
+        $qrCode = QrCode::size(100)->generate($produk->kode_produk);
+        $produk->qr_code = $qrCode;
         $produk->save();
 
-        // redirect kembali ke halaman produk dengan pesan sukses
+        // Tambahkan stok masuk otomatis
+        if($request->stok > 0) {
+            $stokMasuk = new StokMasuk();
+            $stokMasuk->id_produk = $produk->id_produk;
+            $stokMasuk->jumlah = $request->stok;
+            $stokMasuk->tanggal_masuk = now();
+            $stokMasuk->id_pengguna = Auth::id();
+            $stokMasuk->save();
+        }
+
         return redirect()->route('produk')->with('success', 'Produk berhasil ditambahkan');
     }
 
@@ -140,5 +164,14 @@ class ProdukController extends Controller
 
         // kembali ke halaman produk dengan notifikasi sukses
         return redirect()->route('produk')->with('success', 'Produk berhasil dihapus');
+    }
+
+    public function scan()
+    {
+        $data = [
+            'title' => 'Scan QR Code',
+            'MProdukKaryawan' => 'active'
+        ];
+        return view('pengguna.produk.scan', $data);
     }
 }

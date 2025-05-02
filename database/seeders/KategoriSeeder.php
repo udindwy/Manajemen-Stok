@@ -15,8 +15,10 @@ class KategoriSeeder extends Seeder
             ['nama_kategori' => 'Minuman', 'dibuat_pada' => Carbon::now()],
             ['nama_kategori' => 'Makanan Ringan', 'dibuat_pada' => Carbon::now()],
             ['nama_kategori' => 'Perlengkapan Mandi', 'dibuat_pada' => Carbon::now()],
-            ['nama_kategori' => 'Alat Tulis', 'dibuat_pada' => Carbon::now()],
             ['nama_kategori' => 'Bumbu Dapur', 'dibuat_pada' => Carbon::now()],
+            ['nama_kategori' => 'Perlengkapan Rumah', 'dibuat_pada' => Carbon::now()],
+            ['nama_kategori' => 'Perlengkapan Bayi', 'dibuat_pada' => Carbon::now()],
+            ['nama_kategori' => 'Obat-obatan', 'dibuat_pada' => Carbon::now()],
         ];
 
         foreach ($kategori as $k) {

@@ -1,60 +1,161 @@
 @extends('layouts.app')
 
 @section('content')
-    <h1 class="h3 mb-4 text-gray-800">
-        <i class="fas fa-fw fa-arrow-up"></i>
-        {{ $title }}
-    </h1>
+    <div class="container-fluid">
+        <h1 class="h3 mb-4 text-gray-800">
+            <i class="fas fa-fw fa-arrow-up"></i>
+            {{ $title }}
+        </h1>
 
-    <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <a href="{{ route('stokkeluarCreate') }}" class="btn btn-sm btn-primary">
-                <i class="fas fa-plus mr-2"></i>Tambah Stok Keluar
-            </a>
-        </div>
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                <div>
+                    <a href="{{ route('stokkeluarCreate') }}" class="btn btn-primary btn-sm mr-2">
+                        <i class="fas fa-plus fa-sm mr-2"></i>Tambah Stok Keluar
+                    </a>
+                    <button class="btn btn-info btn-sm" data-toggle="modal" data-target="#scannerModal">
+                        <i class="fas fa-qrcode fa-sm mr-2"></i>Scan QR Code
+                    </button>
+                </div>
+            </div>
 
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                    <thead class="bg-primary text-white text-center">
-                        <tr>
-                            <th>No</th>
-                            <th>Kode Produk</th>
-                            <th>Nama Produk</th>
-                            <th>Kategori</th>
-                            <th>Jumlah Keluar</th>
-                            <th>Nama Pengguna</th>
-                            <th>Tanggal Keluar</th>
-                            <th><i class="fas fa-cog"></i></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($stokKeluar as $item)
+            <!-- Modal Scanner -->
+            <div class="modal fade" id="scannerModal" tabindex="-1" role="dialog" aria-labelledby="scannerModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="scannerModalLabel">Scan QR Code Produk</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div id="reader"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div id="result" class="mt-3">
+                                        <div class="alert alert-info">
+                                            Arahkan kamera ke QR Code produk
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @section('scripts')
+                <script src="https://unpkg.com/html5-qrcode"></script>
+                <script>
+                    function onScanSuccess(decodedText, decodedResult) {
+                        console.log("Scanned QR Code:", decodedText);
+
+                        const url = `/stokkeluar/get-product/${decodedText}`;
+
+                        $.ajax({
+                            url: url,
+                            type: 'GET',
+                            success: function(response) {
+                                if (response.success) {
+                                    const produk = response.data;
+                                    $('#scannerModal').modal('hide');
+                                    if (html5QrcodeScanner) {
+                                        html5QrcodeScanner.clear();
+                                    }
+                                    window.location.href = '{{ route("stokkeluarCreate") }}?id_produk=' + produk.id_produk;
+                                } else {
+                                    $('#result').html(`
+                                        <div class="alert alert-danger">
+                                            ${response.message}
+                                        </div>
+                                    `);
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error("Ajax Error:", error);
+                                $('#result').html(`
+                                    <div class="alert alert-danger">
+                                        Terjadi kesalahan saat memproses QR code
+                                    </div>
+                                `);
+                            }
+                        });
+                    }
+
+                    let html5QrcodeScanner;
+
+                    $('#scannerModal').on('shown.bs.modal', function() {
+                        html5QrcodeScanner = new Html5QrcodeScanner(
+                            "reader", {
+                                fps: 10,
+                                qrbox: {
+                                    width: 250,
+                                    height: 250
+                                },
+                                experimentalFeatures: {
+                                    useBarCodeDetectorIfSupported: true
+                                },
+                                rememberLastUsedCamera: true,
+                            }
+                        );
+                        html5QrcodeScanner.render(onScanSuccess);
+                    });
+
+                    $('#scannerModal').on('hidden.bs.modal', function() {
+                        if (html5QrcodeScanner) {
+                            html5QrcodeScanner.clear();
+                        }
+                    });
+                </script>
+            @endsection
+
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead class="bg-primary text-white text-center">
                             <tr>
-                                <td class="text-center">{{ $loop->iteration }}</td>
-                                <td class="text-center">{{ $item->produk->kode_produk }}</td>
-                                <td class="text-left">{{ $item->produk->nama_produk }}</td>
-                                <td class="text-left">{{ $item->produk->kategori->nama_kategori }}</td>
-                                <td class="text-center">{{ $item->jumlah }}</td>
-                                <td class="text-left">{{ $item->pengguna->nama }}</td>
-                                <td class="text-center">
-                                    {{ \Carbon\Carbon::parse($item->tanggal_keluar)->format('Y-m-d H:i:s') }}</td>
-                                <td class="text-center">
-                                    <a href="{{ route('stokkeluarEdit', $item->id_stok_keluar) }}"
-                                        class="btn btn-sm btn-warning">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <button class="btn btn-sm btn-danger" data-toggle="modal"
-                                        data-target="#modalHapusStokKeluar{{ $item->id_stok_keluar }}">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                    @include('admin.stokkeluar.modal')
-                                </td>
+                                <th width="5%">No</th>
+                                <th width="12%">Kode Produk</th>
+                                <th>Nama Produk</th>
+                                <th>Kategori</th>
+                                <th width="10%">Jumlah Keluar</th>
+                                <th>Nama Pengguna</th>
+                                <th width="15%">Tanggal Keluar</th>
+                               <th width="10%"><i class="fas fa-cog"></i></th>
                             </tr>
-                        @endforeach
-                    </tbody>
-
-                </table>
+                        </thead>
+                        <tbody>
+                            @foreach ($stokKeluar as $item)
+                                <tr>
+                                    <td class="text-center">{{ $loop->iteration }}</td>
+                                    <td class="text-center">{{ $item->produk->kode_produk }}</td>
+                                    <td>{{ $item->produk->nama_produk }}</td>
+                                    <td>{{ $item->produk->kategori->nama_kategori }}</td>
+                                    <td class="text-center">{{ $item->jumlah }}</td>
+                                    <td>{{ $item->pengguna->nama }}</td>
+                                    <td class="text-center">{{ \Carbon\Carbon::parse($item->tanggal_keluar)->format('d/m/Y H:i') }}</td>
+                                    <td class="text-center">
+                                        <a href="{{ route('stokkeluarEdit', $item->id_stok_keluar) }}"
+                                            class="btn btn-warning btn-sm mb-1 mr-1" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-danger btn-sm mb-1" 
+                                                data-toggle="modal"
+                                                data-target="#modalHapusStokKeluar{{ $item->id_stok_keluar }}"
+                                                title="Hapus">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                        @include('admin.stokkeluar.modal')
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

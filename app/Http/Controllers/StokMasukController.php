@@ -38,23 +38,20 @@ class StokMasukController extends Controller
         $request->validate([
             'id_produk' => 'required|exists:produk,id_produk',
             'jumlah' => 'required|integer|min:1',
-            'tanggal_masuk' => 'required|date',
         ], [
             'id_produk.required' => 'Produk harus dipilih',
             'id_produk.exists' => 'Produk tidak ditemukan',
             'jumlah.required' => 'Jumlah tidak boleh kosong',
             'jumlah.integer' => 'Jumlah harus berupa angka',
             'jumlah.min' => 'Jumlah minimal 1',
-            'tanggal_masuk.required' => 'Tanggal masuk tidak boleh kosong',
-            'tanggal_masuk.date' => 'Format tanggal tidak valid',
         ]);
 
         // simpan data ke tabel stok_masuk
         $stokMasuk = new StokMasuk();
         $stokMasuk->id_produk = $request->id_produk;
         $stokMasuk->jumlah = $request->jumlah;
-        $stokMasuk->tanggal_masuk = $request->tanggal_masuk;
-        $stokMasuk->id_pengguna = Auth::id(); // ambil id user yang sedang login
+        $stokMasuk->tanggal_masuk = now();
+        $stokMasuk->id_pengguna = Auth::id();
         $stokMasuk->save();
 
         // update stok di tabel produk (tambahkan jumlah stok masuk)
@@ -135,4 +132,52 @@ class StokMasukController extends Controller
 
         return redirect()->route('stokmasuk')->with('success', 'Stok masuk berhasil dihapus');
     }
+
+    // Method untuk scan QR code
+    public function scanQR()
+    {
+        $data = [
+            'title' => 'Scan QR Code Stok Masuk',
+            'MMasuk' => 'active',
+        ];
+        return view('admin.stokmasuk.scan', $data);
+    }
+
+    // Method untuk mencari produk berdasarkan QR code
+    public function searchByQR(Request $request)
+    {
+        $kode_produk = $request->kode_produk;
+        $produk = Produk::where('kode_produk', $kode_produk)->first();
+        
+        if ($produk) {
+            return response()->json([
+                'success' => true,
+                'data' => $produk
+            ]);
+        }
+        
+        return response()->json([
+            'success' => false,
+            'message' => 'Produk tidak ditemukan'
+        ]);
+    }
+
+    // Method untuk mendapatkan produk berdasarkan kode
+    public function getProductByCode($kode_produk)
+    {
+        $produk = Produk::where('kode_produk', $kode_produk)->first();
+        
+        if ($produk) {
+            return response()->json([
+                'success' => true,
+                'data' => $produk
+            ]);
+        }
+        
+        return response()->json([
+            'success' => false,
+            'message' => 'Produk tidak ditemukan'
+        ]);
+    }
 }
+

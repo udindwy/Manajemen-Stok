@@ -33,19 +33,26 @@ class StokKeluarController extends Controller
     }
 
     // fungsi untuk menampilkan form tambah stok keluar
-    public function create()
+    public function create(Request $request)
     {
-        $produk = Produk::all();
+        $selectedProduct = null;
+        if ($request->has('kode_produk')) {
+            $selectedProduct = Produk::where('kode_produk', $request->kode_produk)->first();
+        }
+        
         $data = [
             'title' => 'Tambah Stok Keluar',
-            'produk' => $produk,
+            'MKeluar' => 'active',
+            'produk' => Produk::all(),
+            'selectedProduct' => $selectedProduct
         ];
 
+        // Gunakan view admin jika user adalah admin
         if (Auth::user()->peran == 'admin') {
             return view('admin.stokkeluar.create', $data);
-        } else {
-            return view('pengguna.stokkeluar.create', $data);
         }
+
+        return view('pengguna.stokkeluar.create', $data);
     }
 
     // fungsi untuk menyimpan data stok keluar baru
@@ -55,16 +62,16 @@ class StokKeluarController extends Controller
         $request->validate([
             'id_produk' => 'required|exists:produk,id_produk',
             'jumlah' => 'required|integer|min:1',
-            'tanggal_keluar' => 'required|date',
         ], [
             'id_produk.required' => 'Produk harus dipilih',
             'id_produk.exists' => 'Produk tidak ditemukan',
             'jumlah.required' => 'Jumlah tidak boleh kosong',
             'jumlah.integer' => 'Jumlah harus berupa angka',
             'jumlah.min' => 'Jumlah minimal 1',
-            'tanggal_keluar.required' => 'Tanggal keluar tidak boleh kosong',
-            'tanggal_keluar.date' => 'Format tanggal tidak valid',
         ]);
+
+        // Set tanggal_keluar ke waktu sekarang
+        $request->merge(['tanggal_keluar' => now()]);
 
         $produk = Produk::findOrFail($request->id_produk);
 
@@ -76,14 +83,20 @@ class StokKeluarController extends Controller
         // simpan data ke stok_keluar
         $stokKeluar = new StokKeluar();
         $stokKeluar->id_produk = $request->id_produk;
+        $stokKeluar->id_pengguna = Auth::user()->id_pengguna;
         $stokKeluar->jumlah = $request->jumlah;
-        $stokKeluar->tanggal_keluar = $request->tanggal_keluar;
-        $stokKeluar->id_pengguna = Auth::id();
+        $stokKeluar->tanggal_keluar = now();
         $stokKeluar->save();
 
-        // update stok produk
+        // Update stok produk
+        $produk = Produk::find($request->id_produk);
         $produk->stok -= $request->jumlah;
         $produk->save();
+
+        // Redirect ke halaman produk untuk pengguna
+        if (Auth::user()->peran == 'pengguna') {
+            return redirect()->route('produk')->with('success', 'Stok keluar berhasil ditambahkan');
+        }
 
         return redirect()->route('stokkeluar')->with('success', 'Stok keluar berhasil ditambahkan');
     }
@@ -158,5 +171,22 @@ class StokKeluarController extends Controller
         $stokKeluar->delete();
 
         return redirect()->route('stokkeluar')->with('success', 'Stok keluar berhasil dihapus');
+    }
+
+    public function getProductByCode($kode_produk)
+    {
+        $produk = Produk::where('kode_produk', $kode_produk)->first();
+        
+        if ($produk) {
+            return response()->json([
+                'success' => true,
+                'data' => $produk
+            ]);
+        }
+        
+        return response()->json([
+            'success' => false,
+            'message' => 'Produk tidak ditemukan'
+        ]);
     }
 }

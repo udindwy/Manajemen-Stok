@@ -34,11 +34,13 @@ Route::middleware('checkLogin')->group(function () {
 
     // route lihat daftar produk
     Route::get('produk', [ProdukController::class, 'index'])->name('produk');
+    Route::get('produk/scan', [ProdukController::class, 'scan'])->name('produkScan');
 
     // route stok keluar
     Route::get('stokkeluar', [StokKeluarController::class, 'index'])->name('stokkeluar');
     Route::get('stokkeluar/create', [StokKeluarController::class, 'create'])->name('stokkeluarCreate');
     Route::post('stokkeluar/store', [StokKeluarController::class, 'store'])->name('stokkeluarStore');
+    Route::get('stokkeluar/get-product/{kode_produk}', [StokKeluarController::class, 'getProductByCode'])->name('stokkeluarGetProduct');
 
     // route laporan mutasi stok
     Route::get('mutasi_stok', [LaporanController::class, 'mutasiStok'])->name('laporan.mutasi_stok');
@@ -66,6 +68,9 @@ Route::middleware('checkLogin')->group(function () {
         Route::get('stokmasuk', [StokMasukController::class, 'index'])->name('stokmasuk');
         Route::get('stokmasuk/create', [StokMasukController::class, 'create'])->name('stokmasukCreate');
         Route::post('stokmasuk/store', [StokMasukController::class, 'store'])->name('stokmasukStore');
+        Route::post('stokmasuk/scan-qr', [StokMasukController::class, 'scanQR'])->name('stokmasukScanQR');
+        Route::get('stokmasuk/get-product/{kode_produk}', [StokMasukController::class, 'getProductByCode'])->name('stokmasukGetProduct');
+        Route::post('stokmasuk/search-by-qr', [StokMasukController::class, 'searchByQR'])->name('searchByQR');
         Route::get('stokmasuk/edit/{id_stok_masuk}', [StokMasukController::class, 'edit'])->name('stokmasukEdit');
         Route::post('stokmasuk/update/{id_stok_masuk}', [StokMasukController::class, 'update'])->name('stokmasukUpdate');
         Route::delete('stokmasuk/destroy/{id_stok_masuk}', [StokMasukController::class, 'destroy'])->name('stokmasukDestroy');

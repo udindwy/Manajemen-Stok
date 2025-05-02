@@ -16,6 +16,7 @@ class CreateProdukTable extends Migration
             $table->integer('stok')->default(0);
             $table->integer('stok_minimal')->default(0);
             $table->text('deskripsi')->nullable();
+            $table->text('qr_code')->nullable(); // Ubah dari string ke text
             $table->timestamp('dibuat_pada')->useCurrent();
 
             $table->foreign('id_kategori')->references('id_kategori')->on('kategori')->onDelete('cascade');

@@ -40,7 +40,7 @@
                                 <td class="text-center">{{ $no++ }}</td>
                                 <td class="text-center">{{ $item['kode_produk'] }}</td>
                                 <td class="text-left">{{ $item['nama_produk'] }}</td>
-                                <td class="text-center">{{ $item['tanggal'] }}</td>
+                                <td class="text-center">{{ \Carbon\Carbon::parse($item['tanggal'])->format('d/m/Y H:i') }}</td>
                                 @if (Auth::user()->peran == 'admin')
                                     <td class="text-center">{{ $item['jenis'] }}</td>
                                     <td class="text-left">{{ $item['nama_pengguna'] }}</td>

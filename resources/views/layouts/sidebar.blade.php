@@ -1,4 +1,4 @@
-        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Brand Aplikasi -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ route('dashboard') }}">
@@ -63,6 +63,9 @@
                     <a class="nav-link" href="{{ route('stokminim') }}">
                         <i class="fas fa-fw fa-bell"></i>
                         <span>Stok Minim</span>
+                        @if($stokMinimCount > 0)
+                            <span class="badge badge-danger badge-counter ml-2">{{ $stokMinimCount }}</span>
+                        @endif
                     </a>
                 </li>
 
