@@ -31,5 +31,4 @@ Aplikasi ini bertujuan untuk mengelola dan memantau stok barang dalam suatu sist
 - **Backend:** Laravel
 - **Frontend:** Blade (Laravel templating engine), **StartBootstrap SB Admin 2** (admin dashboard template)
 - **Database:** MySQL
-- **Notifikasi:** SweetAlert2
 - **Laporan:** Export ke PDF
