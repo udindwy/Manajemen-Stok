@@ -22,10 +22,7 @@
                             <th>Kode Produk</th>
                             <th>Nama Produk</th>
                             <th>Tanggal</th>
-                            <th>Jenis Mutasi</th>
-                            <th>Nama Pengguna</th>
                             <th>Jumlah</th>
-                            <th>Stok Tersisa</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -36,10 +33,7 @@
                                 <td class="text-center">{{ $item['kode_produk'] }}</td>
                                 <td class="text-left">{{ $item['nama_produk'] }}</td>
                                 <td class="text-center">{{ \Carbon\Carbon::parse($item['tanggal'])->format('d/m/Y H:i') }}</td>
-                                <td class="text-center">{{ $item['jenis'] }}</td>
-                                <td class="text-left">{{ $item['nama_pengguna'] }}</td>
                                 <td class="text-center">{{ $item['jumlah'] }}</td>
-                                <td class="text-center">{{ $item['sisa_stok'] }}</td>
                             </tr>
                         @endforeach
                     </tbody>

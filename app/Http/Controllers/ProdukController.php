@@ -97,7 +97,7 @@ class ProdukController extends Controller
         $produk->save();
 
         // Tambahkan stok masuk otomatis
-        if($request->stok > 0) {
+        if ($request->stok > 0) {
             $stokMasuk = new StokMasuk();
             $stokMasuk->id_produk = $produk->id_produk;
             $stokMasuk->jumlah = $request->stok;

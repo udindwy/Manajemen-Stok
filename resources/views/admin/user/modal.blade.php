@@ -14,15 +14,9 @@
                     <div class="col-6">Nama</div>
                     <div class="col-6">: {{ $item->nama }}</div>
                     <div class="col-6">Email</div>
-                    <div class="col-6">: <span class="badge badge-primary">{{ $item->email }}</span></div>
+                    <div class="col-6">: {{ $item->email }}</div>
                     <div class="col-6">Role</div>
-                    <div class="col-6">:
-                        @if ($item->peran == 'admin')
-                            <span class="badge badge-info">{{ $item->peran }}</span>
-                        @else
-                            <span class="badge badge-primary">{{ $item->peran }}</span>
-                        @endif
-                    </div>
+                    <div class="col-6">: {{ $item->peran }}</div>
                 </div>
             </div>
             <div class="modal-footer">

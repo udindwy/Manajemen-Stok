@@ -25,17 +25,14 @@
         th {
             background-color: #ddd;
             text-align: center;
-            /* Header rata tengah */
         }
 
         td.text-center {
             text-align: center;
-            /* Untuk angka atau data pendek */
         }
 
         td.text-left {
             text-align: left;
-            /* Untuk teks seperti nama produk, nama pengguna */
         }
 
         h3 {
@@ -55,14 +52,7 @@
                 <th>Kode Produk</th>
                 <th>Nama Produk</th>
                 <th>Tanggal</th>
-                @if (Auth::check() && Auth::user()->peran == 'admin')
-                    <th>Jenis Mutasi</th>
-                    <th>Nama Pengguna</th>
-                @endif
                 <th>Jumlah</th>
-                @if (Auth::check() && Auth::user()->peran == 'admin')
-                    <th>Stok Tersisa</th>
-                @endif
             </tr>
         </thead>
         <tbody>
@@ -73,14 +63,7 @@
                     <td class="text-center">{{ $item['kode_produk'] }}</td>
                     <td class="text-left">{{ $item['nama_produk'] }}</td>
                     <td class="text-center">{{ \Carbon\Carbon::parse($item['tanggal'])->format('d/m/Y H:i') }}</td>
-                    @if (Auth::check() && Auth::user()->peran == 'admin')
-                        <td class="text-center">{{ $item['jenis'] }}</td>
-                        <td class="text-left">{{ $item['nama_pengguna'] }}</td>
-                    @endif
                     <td class="text-center">{{ $item['jumlah'] }}</td>
-                    @if (Auth::check() && Auth::user()->peran == 'admin')
-                        <td class="text-center">{{ $item['sisa_stok'] }}</td>
-                    @endif
                 </tr>
             @endforeach
         </tbody>

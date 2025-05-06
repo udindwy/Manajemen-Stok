@@ -71,10 +71,17 @@
 
         <!-- Nav Item - Laporan -->
         <li class="nav-item {{ $MLaporan ?? '' }}">
-            <a class="nav-link" href="{{ route('laporan.mutasi_stok') }}">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLaporan"
+                aria-expanded="true" aria-controls="collapseLaporan">
                 <i class="fas fa-fw fa-chart-bar"></i>
                 <span>Laporan</span>
             </a>
+            <div id="collapseLaporan" class="collapse" aria-labelledby="headingLaporan" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" href="{{ route('laporan.mutasi.stok.masuk') }}">Stok Masuk</a>
+                    <a class="collapse-item" href="{{ route('laporan.mutasi.stok.keluar') }}">Stok Keluar</a>
+                </div>
+            </div>
         </li>
 
         <!-- Nav Item - Kelola Pengguna -->
@@ -87,7 +94,7 @@
     @else
         <!-- Heading -->
         <div class="sidebar-heading">
-            Menu User
+            Menu Pengguna
         </div>
 
         <!-- Nav Item - Produk -->

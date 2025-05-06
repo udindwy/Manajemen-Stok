@@ -37,18 +37,8 @@
                                 <tr>
                                     <td class="text-center">{{ $loop->iteration }}</td>
                                     <td>{{ $item->nama }}</td>
-                                    <td>
-                                        <span class="badge {{ $item->peran == 'admin' ? 'badge-info' : 'badge-primary' }}">
-                                            {{ $item->email }}
-                                        </span>
-                                    </td>
-                                    <td class="text-center">
-                                        @if ($item->peran == 'admin')
-                                            <span class="badge badge-info">{{ $item->peran }}</span>
-                                        @elseif ($item->peran == 'pengguna')
-                                            <span class="badge badge-primary">{{ $item->peran }}</span>
-                                        @endif
-                                    </td>
+                                    <td>{{ $item->email }}</td>
+                                    <td class="text-center">{{ $item->peran }}</td>
                                     <td class="text-center">
                                         {{ \Carbon\Carbon::parse($item->dibuat_pada)->format('d/m/Y H:i') }}</td>
                                     <td class="text-center">

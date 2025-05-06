@@ -8,7 +8,7 @@
 
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <a href="{{ route('laporan.mutasi_stok_pdf') }}" class="btn btn-sm btn-danger">
+            <a href="{{ route('laporan.mutasi.stok.masuk.pdf') }}" class="btn btn-sm btn-danger">
                 <i class="fas fa-file-pdf mr-2"></i>PDF
             </a>
         </div>
@@ -22,7 +22,6 @@
                             <th>Kode Produk</th>
                             <th>Nama Produk</th>
                             <th>Tanggal</th>
-                            <th>Jenis Mutasi</th>
                             <th>Nama Pengguna</th>
                             <th>Jumlah</th>
                             <th>Stok Tersisa</th>
@@ -36,7 +35,6 @@
                                 <td class="text-center">{{ $item['kode_produk'] }}</td>
                                 <td class="text-left">{{ $item['nama_produk'] }}</td>
                                 <td class="text-center">{{ \Carbon\Carbon::parse($item['tanggal'])->format('d/m/Y H:i') }}</td>
-                                <td class="text-center">{{ $item['jenis'] }}</td>
                                 <td class="text-left">{{ $item['nama_pengguna'] }}</td>
                                 <td class="text-center">{{ $item['jumlah'] }}</td>
                                 <td class="text-center">{{ $item['sisa_stok'] }}</td>
