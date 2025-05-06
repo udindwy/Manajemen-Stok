@@ -8,6 +8,11 @@
         </h1>
 
         <div class="card shadow mb-4">
+            <div class="card-header bg-primary">
+                <a href="{{ route('produk') }}" class="btn btn-sm btn-success">
+                    <i class="fas fa-arrow-left mr-2"></i>Kembali
+                </a>
+            </div>
             <div class="card-body">
                 <form action="{{ route('stokkeluarStore') }}" method="POST" class="form-horizontal">
                     @csrf
@@ -16,11 +21,12 @@
                             <label for="id_produk" class="form-label">
                                 <span class="text-danger">*</span>Produk:
                             </label>
-                            <select name="id_produk" id="id_produk" class="form-control @error('id_produk') is-invalid @enderror">
+                            <select name="id_produk" id="id_produk"
+                                class="form-control @error('id_produk') is-invalid @enderror">
                                 <option value="">--Pilih Produk--</option>
                                 @foreach ($produk as $item)
                                     <option value="{{ $item->id_produk }}"
-                                        {{ (old('id_produk') == $item->id_produk || (isset($selectedProduct) && $selectedProduct->id_produk == $item->id_produk)) ? 'selected' : '' }}>
+                                        {{ old('id_produk') == $item->id_produk || (isset($selectedProduct) && $selectedProduct->id_produk == $item->id_produk) ? 'selected' : '' }}>
                                         {{ $item->kode_produk }} - {{ $item->nama_produk }}
                                     </option>
                                 @endforeach

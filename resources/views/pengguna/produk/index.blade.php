@@ -8,10 +8,15 @@
         </h1>
 
         <div class="card shadow mb-4">
-            <div class="card-header py-3">
-                <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#scannerModal">
-                    <i class="fas fa-qrcode fa-sm mr-2"></i>Scan QR Code
-                </button>
+            <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                <div>
+                    <a href="{{ route('stokkeluar') }}" class="btn btn-primary btn-sm mr-2">
+                        <i class="fas fa-plus fa-sm mr-2"></i>Transaksi
+                    </a>
+                    <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#scannerModal">
+                        <i class="fas fa-qrcode fa-sm mr-2"></i>Scan QR Code
+                    </button>
+                </div>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -45,7 +50,8 @@
     </div>
 
     <!-- Scanner Modal -->
-    <div class="modal fade" id="scannerModal" tabindex="-1" role="dialog" aria-labelledby="scannerModalLabel" aria-hidden="true">
+    <div class="modal fade" id="scannerModal" tabindex="-1" role="dialog" aria-labelledby="scannerModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -74,24 +80,27 @@
 @endsection
 
 @section('scripts')
-<script src="https://unpkg.com/html5-qrcode"></script>
-<script>
-    function onScanSuccess(decodedText, decodedResult) {
-        window.location.href = `/stokkeluar/create?kode_produk=${decodedText}`;
-    }
-
-    let html5QrcodeScanner = null;
-
-    $('#scannerModal').on('shown.bs.modal', function (e) {
-        html5QrcodeScanner = new Html5QrcodeScanner(
-            "reader", { fps: 10, qrbox: 250 });
-        html5QrcodeScanner.render(onScanSuccess);
-    });
-
-    $('#scannerModal').on('hidden.bs.modal', function (e) {
-        if (html5QrcodeScanner) {
-            html5QrcodeScanner.clear();
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script>
+        function onScanSuccess(decodedText, decodedResult) {
+            window.location.href = `/stokkeluar/create?kode_produk=${decodedText}`;
         }
-    });
-</script>
+
+        let html5QrcodeScanner = null;
+
+        $('#scannerModal').on('shown.bs.modal', function(e) {
+            html5QrcodeScanner = new Html5QrcodeScanner(
+                "reader", {
+                    fps: 10,
+                    qrbox: 250
+                });
+            html5QrcodeScanner.render(onScanSuccess);
+        });
+
+        $('#scannerModal').on('hidden.bs.modal', function(e) {
+            if (html5QrcodeScanner) {
+                html5QrcodeScanner.clear();
+            }
+        });
+    </script>
 @endsection

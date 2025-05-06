@@ -49,6 +49,11 @@ Route::middleware('checkLogin')->group(function () {
     // middleware 'isAdmin' untuk membatasi akses hanya untuk admin
     Route::middleware('isAdmin')->group(function () {
 
+        Route::get('laporan/mutasi-stok-masuk', [LaporanController::class, 'mutasiStokMasuk'])->name('laporan.mutasi.stok.masuk');
+        Route::get('laporan/mutasi-stok-keluar', [LaporanController::class, 'mutasiStokKeluar'])->name('laporan.mutasi.stok.keluar');
+        Route::get('laporan/mutasi-stok-masuk/pdf', [LaporanController::class, 'mutasiStokMasukPDF'])->name('laporan.mutasi.stok.masuk.pdf');
+        Route::get('laporan/mutasi-stok-keluar/pdf', [LaporanController::class, 'mutasiStokKeluarPDF'])->name('laporan.mutasi.stok.keluar.pdf');
+
         // route kelola produk
         Route::get('produk/create', [ProdukController::class, 'create'])->name('produkCreate');
         Route::post('produk/store', [ProdukController::class, 'store'])->name('produkStore');

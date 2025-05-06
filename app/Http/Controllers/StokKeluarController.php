@@ -24,11 +24,11 @@ class StokKeluarController extends Controller
         } else {
             // jika bukan admin, tampilkan halaman tambah stok keluar
             $data = [
-                'title' => 'Stok Keluar',
-                "MStokKaryawan" => "active",
+                'title' => 'Transaksi',
+                "MProdukKaryawan" => "active",
                 'produk' => Produk::all()  // ambil semua produk
             ];
-            return view('pengguna.stokkeluar.create', $data);
+            return view('pengguna.produk.create', $data);
         }
     }
 
@@ -39,7 +39,7 @@ class StokKeluarController extends Controller
         if ($request->has('kode_produk')) {
             $selectedProduct = Produk::where('kode_produk', $request->kode_produk)->first();
         }
-        
+
         $data = [
             'title' => 'Tambah Stok Keluar',
             'MKeluar' => 'active',
@@ -47,12 +47,14 @@ class StokKeluarController extends Controller
             'selectedProduct' => $selectedProduct
         ];
 
-        // Gunakan view admin jika user adalah admin
-        if (Auth::user()->peran == 'admin') {
-            return view('admin.stokkeluar.create', $data);
+        // Modifikasi data title dan menu active untuk pengguna
+        if (Auth::user()->peran != 'admin') {
+            $data['title'] = 'Transaksi';
+            $data['MProdukKaryawan'] = 'active';
+            return view('pengguna.produk.create', $data);
         }
 
-        return view('pengguna.stokkeluar.create', $data);
+        return view('admin.stokkeluar.create', $data);
     }
 
     // fungsi untuk menyimpan data stok keluar baru
@@ -95,7 +97,7 @@ class StokKeluarController extends Controller
 
         // Redirect ke halaman produk untuk pengguna
         if (Auth::user()->peran == 'pengguna') {
-            return redirect()->route('produk')->with('success', 'Stok keluar berhasil ditambahkan');
+            return redirect()->route('produk')->with('success', 'Transaksi berhasil dilakukan');
         }
 
         return redirect()->route('stokkeluar')->with('success', 'Stok keluar berhasil ditambahkan');
@@ -176,14 +178,14 @@ class StokKeluarController extends Controller
     public function getProductByCode($kode_produk)
     {
         $produk = Produk::where('kode_produk', $kode_produk)->first();
-        
+
         if ($produk) {
             return response()->json([
                 'success' => true,
                 'data' => $produk
             ]);
         }
-        
+
         return response()->json([
             'success' => false,
             'message' => 'Produk tidak ditemukan'
