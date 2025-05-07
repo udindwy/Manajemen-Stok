@@ -3,7 +3,7 @@
 @section('content')
     <h1 class="h3 mb-4 text-gray-800">
         <i class="fas fa-fw fa-chart-bar"></i>
-        {{ $title }}
+        Laporan Mutasi Stok
     </h1>
 
     <div class="card">
@@ -26,13 +26,13 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @php $no = 1; @endphp
                         @foreach ($mutasi as $item)
                             <tr>
-                                <td class="text-center">{{ $no++ }}</td>
+                                <td class="text-center">{{ $loop->iteration }}</td>
                                 <td class="text-center">{{ $item['kode_produk'] }}</td>
-                                <td class="text-left">{{ $item['nama_produk'] }}</td>
-                                <td class="text-center">{{ \Carbon\Carbon::parse($item['tanggal'])->format('d/m/Y H:i') }}</td>
+                                <td>{{ $item['nama_produk'] }}</td>
+                                <td class="text-center">{{ \Carbon\Carbon::parse($item['tanggal'])->format('d/m/Y H:i') }}
+                                </td>
                                 <td class="text-center">{{ $item['jumlah'] }}</td>
                             </tr>
                         @endforeach

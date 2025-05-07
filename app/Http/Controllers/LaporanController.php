@@ -227,4 +227,57 @@ class LaporanController extends Controller
         $pdf = PDF::loadView('admin.laporan.mutasi_stok_keluar_pdf', compact('mutasi'));
         return $pdf->download('laporan-stok-keluar.pdf');
     }
+
+    public function mutasiStokPengguna()
+    {
+        $user = Auth::user();
+        
+        // Ambil data stok keluar milik pengguna ini saja
+        $stokKeluar = StokKeluar::with(['produk', 'pengguna'])
+            ->where('id_pengguna', $user->id_pengguna)
+            ->get();
+
+        $mutasi = collect();
+        
+        foreach ($stokKeluar as $keluar) {
+            $mutasi->push([
+                'kode_produk' => $keluar->produk->kode_produk,
+                'nama_produk' => $keluar->produk->nama_produk,
+                'tanggal' => $keluar->created_at,
+                'jumlah' => $keluar->jumlah
+            ]);
+        }
+
+        return view('pengguna.laporan.mutasi_stok', [
+            'title' => 'Mutasi Stok Saya',
+            'MLaporanKaryawan' => 'active',
+            'mutasi' => $mutasi
+        ]);
+    }
+
+    public function mutasiStokPenggunaPDF()
+    {
+        $user = Auth::user();
+        
+        $stokKeluar = StokKeluar::with(['produk', 'pengguna'])
+            ->where('id_pengguna', $user->id_pengguna)
+            ->get();
+
+        $mutasi = collect();
+        
+        foreach ($stokKeluar as $keluar) {
+            $mutasi->push([
+                'kode_produk' => $keluar->produk->kode_produk,
+                'nama_produk' => $keluar->produk->nama_produk,
+                'tanggal' => $keluar->created_at,
+                'jumlah' => $keluar->jumlah
+            ]);
+        }
+
+        $pdf = PDF::loadView('pengguna.laporan.mutasi_stok_pdf', [
+            'mutasi' => $mutasi
+        ]);
+
+        return $pdf->download('mutasi-stok-' . date('Y-m-d') . '.pdf');
+    }
 }

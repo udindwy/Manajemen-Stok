@@ -58,7 +58,7 @@
         @if (Auth::user()->peran == 'admin')
             <!-- Total Stok Masuk -->
             <div class="col-xl-3 col-md-6 mb-4">
-                <a href="{{ route('laporan.mutasi_stok') }}" class="text-decoration-none">
+                <a href="{{ route('laporan.mutasi.stok.masuk') }}" class="text-decoration-none">
                     <div class="card border-left-success shadow h-100 py-2">
                         <div class="card-body">
                             <div class="row no-gutters align-items-center">
@@ -82,13 +82,14 @@
 
         <!-- Total Stok Keluar -->
         <div class="col-xl-3 col-md-6 mb-4">
-            <a href="{{ route('laporan.mutasi_stok') }}" class="text-decoration-none">
+            <a href="{{ Auth::user()->peran == 'admin' ? route('laporan.mutasi.stok.keluar') : route('pengguna.mutasi.stok') }}"
+                class="text-decoration-none">
                 <div class="card border-left-warning shadow h-100 py-2">
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
                                 <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                    {{ Auth::user()->peran == 'admin' ? 'Total Stok Keluar' : 'Transaksi' }}
+                                    {{ Auth::user()->peran == 'admin' ? 'Total Stok Keluar' : 'Transaksi Saya' }}
                                 </div>
                                 <div class="h5 mb-0 font-weight-bold text-gray-800">
                                     {{ $totalStokKeluar }}

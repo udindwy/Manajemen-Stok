@@ -14,11 +14,10 @@ class DashboardController extends Controller
     // method untuk menampilkan halaman dashboard
     public function index()
     {
-        // menghitung total produk
         $totalProduk = Produk::count();
+        $pengguna = Auth::user();
 
-        // jika pengguna adalah admin
-        if (Auth::user()->peran == 'admin') {
+        if ($pengguna->peran == 'admin') {
             // menghitung total pengguna
             $jumlahPengguna = Pengguna::count();
 
@@ -42,15 +41,14 @@ class DashboardController extends Controller
                 'produkStokMinim' => $produkStokMinim,
             ]);
         } else {
-            // jika bukan admin, tampilkan data total stok keluar berdasarkan id pengguna yang login
-            $totalStokKeluar = StokKeluar::where('id_pengguna', Auth::id())->sum('jumlah');
+            $totalStokKeluar = StokKeluar::where('id_pengguna', $pengguna->id_pengguna)->sum('jumlah');
 
-            // menampilkan view dashboard untuk pengguna biasa
             return view('dashboard', [
                 'title' => 'Dashboard',
                 'menuDashboard' => 'active',
                 'totalProduk' => $totalProduk,
                 'totalStokKeluar' => $totalStokKeluar,
+                'routeMutasiStok' => route('pengguna.mutasi.stok')  // Update route ini
             ]);
         }
     }

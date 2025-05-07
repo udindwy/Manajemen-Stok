@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
-class ProdukController extends Controller
+class ProdukController extends Controller 
 {
     public function index()
     {
@@ -56,6 +56,7 @@ class ProdukController extends Controller
         return view('admin.produk.create', $data);
     }
 
+    // Di method store
     public function store(Request $request)
     {
         // validasi input dari form
@@ -91,8 +92,13 @@ class ProdukController extends Controller
         // generate kode_produk otomatis
         $produk->kode_produk = 'PRD-' . str_pad($produk->id_produk, 4, '0', STR_PAD_LEFT);
 
-        // generate QR code
-        $qrCode = QrCode::size(100)->generate($produk->kode_produk);
+        // Generate QR code dengan background putih dan ukuran lebih besar
+        // Generate QR code dengan pengaturan yang dioptimalkan
+        $qrCode = QrCode::size(350)
+                       ->backgroundColor(255, 255, 255)
+                       ->margin(2)  // Margin diperbesar untuk pemindaian lebih baik
+                       ->padding(10) // Tambah padding di sekitar QR code
+                       ->generate($produk->kode_produk);
         $produk->qr_code = $qrCode;
         $produk->save();
 

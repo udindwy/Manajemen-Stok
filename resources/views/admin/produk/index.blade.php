@@ -78,32 +78,37 @@
             const svg = event.target.closest('a').querySelector('svg');
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
-
-            canvas.width = svg.width.baseVal.value;
-            canvas.height = svg.height.baseVal.value;
-
+            
+            // Atur ukuran canvas dengan padding
+            canvas.width = 350;
+            canvas.height = 350;
+            
             const img = new Image();
             const svgData = new XMLSerializer().serializeToString(svg);
-            const svgBlob = new Blob([svgData], {
-                type: 'image/svg+xml;charset=utf-8'
-            });
-            const url = URL.createObjectURL(svgBlob);
-
+            const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+            
             img.onload = function() {
+                // Isi background putih
                 ctx.fillStyle = 'white';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.drawImage(img, 0, 0);
-
+                
+                // Hitung padding
+                const padding = 20;
+                const size = canvas.width - (padding * 2);
+                
+                // Gambar QR code dengan padding
+                ctx.drawImage(img, padding, padding, size, size);
+                
+                // Unduh gambar
                 const link = document.createElement('a');
                 link.download = `QR-${kode}-${nama}.png`;
-                link.href = canvas.toDataURL('image/png');
+                link.href = canvas.toDataURL('image/png', 1.0);
                 link.click();
-
-                URL.revokeObjectURL(url);
             }
-
-            img.src = url;
+            
+            img.src = URL.createObjectURL(svgBlob);
             event.preventDefault();
+            URL.revokeObjectURL(img.src);
         }
     </script>
 @endsection
