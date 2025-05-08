@@ -51,6 +51,7 @@
                 <th>No</th>
                 <th>Kode Produk</th>
                 <th>Nama Produk</th>
+                <th>Kategori</th>
                 <th>Tanggal</th>
                 <th>Nama Pengguna</th>
                 <th>Jumlah</th>
@@ -64,6 +65,7 @@
                     <td class="text-center">{{ $no++ }}</td>
                     <td class="text-center">{{ $item['kode_produk'] }}</td>
                     <td class="text-left">{{ $item['nama_produk'] }}</td>
+                    <td class="text-left">{{ $item['kategori'] }}</td>
                     <td class="text-center">{{ \Carbon\Carbon::parse($item['tanggal'])->format('d/m/Y H:i') }}</td>
                     <td class="text-left">{{ $item['nama_pengguna'] }}</td>
                     <td class="text-center">{{ $item['jumlah'] }}</td>

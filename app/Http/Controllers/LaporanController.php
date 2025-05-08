@@ -54,6 +54,7 @@ class LaporanController extends Controller
             $mutasi->push([
                 'kode_produk' => $keluar->produk->kode_produk,
                 'nama_produk' => $keluar->produk->nama_produk,
+                'kategori' => $keluar->produk->kategori->nama_kategori ?? '-',
                 'tanggal' => $keluar->tanggal_keluar,
                 'jenis' => 'Stok Keluar',
                 'jumlah' => $keluar->jumlah,
@@ -77,42 +78,42 @@ class LaporanController extends Controller
     {
         $user = Auth::user();
 
-        // ambil data stok masuk dan stok keluar sesuai dengan peran pengguna
+        // Update eager loading to include kategori
         if ($user->peran == 'admin') {
-            $stokMasuk = StokMasuk::with('produk')->get();
-            $stokKeluar = StokKeluar::with(['produk', 'pengguna'])->get();
+            $stokMasuk = StokMasuk::with(['produk.kategori'])->get();
+            $stokKeluar = StokKeluar::with(['produk.kategori', 'pengguna'])->get();
         } else {
-            $stokMasuk = collect(); // pengguna biasa tidak bisa melihat stok masuk
-            $stokKeluar = StokKeluar::with(['produk', 'pengguna'])
+            $stokMasuk = collect();
+            $stokKeluar = StokKeluar::with(['produk.kategori', 'pengguna'])
                 ->where('id_pengguna', $user->id_pengguna)
                 ->get();
         }
 
-        $mutasi = collect(); // buat koleksi kosong untuk data mutasi
+        $mutasi = collect();
 
-        // proses data stok masuk dan masukkan ke dalam koleksi mutasi
         foreach ($stokMasuk as $masuk) {
             $mutasi->push([
                 'nama_produk' => $masuk->produk->nama_produk,
                 'kode_produk' => $masuk->produk->kode_produk,
+                'kategori' => $masuk->produk->kategori->nama_kategori ?? '-',
                 'tanggal' => $masuk->tanggal_masuk,
                 'jenis' => 'Stok Masuk',
                 'jumlah' => $masuk->jumlah,
-                'sisa_stok' => $user->peran == 'admin' ? $masuk->produk->stok : '-', // hanya admin bisa lihat stok
+                'sisa_stok' => $user->peran == 'admin' ? $masuk->produk->stok : '-',
                 'nama_pengguna' => $masuk->pengguna->nama ?? 'Admin',
             ]);
         }
 
-        // proses data stok keluar dan masukkan ke dalam koleksi mutasi
         foreach ($stokKeluar as $keluar) {
             $mutasi->push([
                 'nama_produk' => $keluar->produk->nama_produk,
                 'kode_produk' => $keluar->produk->kode_produk,
+                'kategori' => $keluar->produk->kategori->nama_kategori ?? '-',
                 'tanggal' => $keluar->tanggal_keluar,
                 'jenis' => 'Stok Keluar',
                 'jumlah' => $keluar->jumlah,
-                'sisa_stok' => $user->peran == 'admin' ? $keluar->produk->stok : '-', // hanya admin bisa lihat stok
-                'nama_pengguna' => $keluar->pengguna->nama ?? '-', // jika tidak ada pengguna, tampilkan '-'
+                'sisa_stok' => $user->peran == 'admin' ? $keluar->produk->stok : '-',
+                'nama_pengguna' => $keluar->pengguna->nama ?? '-',
             ]);
         }
 
@@ -144,6 +145,7 @@ class LaporanController extends Controller
             $mutasi->push([
                 'kode_produk' => $masuk->produk->kode_produk,
                 'nama_produk' => $masuk->produk->nama_produk,
+                'kategori' => $masuk->produk->kategori->nama_kategori ?? '-',
                 'tanggal' => $masuk->tanggal_masuk,
                 'jumlah' => $masuk->jumlah,
                 'sisa_stok' => $masuk->produk->stok,
@@ -171,6 +173,7 @@ class LaporanController extends Controller
             $mutasi->push([
                 'kode_produk' => $keluar->produk->kode_produk,
                 'nama_produk' => $keluar->produk->nama_produk,
+                'kategori' => $keluar->produk->kategori->nama_kategori ?? '-', // tambah kategori
                 'tanggal' => $keluar->tanggal_keluar,
                 'jumlah' => $keluar->jumlah,
                 'sisa_stok' => $keluar->produk->stok,
@@ -193,6 +196,7 @@ class LaporanController extends Controller
             $mutasi->push([
                 'kode_produk' => $masuk->produk->kode_produk,
                 'nama_produk' => $masuk->produk->nama_produk,
+                'kategori' => $masuk->produk->kategori->nama_kategori ?? '-', // tambah kategori
                 'tanggal' => $masuk->tanggal_masuk,
                 'jumlah' => $masuk->jumlah,
                 'sisa_stok' => $masuk->produk->stok,
@@ -216,6 +220,7 @@ class LaporanController extends Controller
             $mutasi->push([
                 'kode_produk' => $keluar->produk->kode_produk,
                 'nama_produk' => $keluar->produk->nama_produk,
+                'kategori' => $keluar->produk->kategori->nama_kategori ?? '-', // tambah kategori
                 'tanggal' => $keluar->tanggal_keluar,
                 'jumlah' => $keluar->jumlah,
                 'sisa_stok' => $keluar->produk->stok,
@@ -231,18 +236,18 @@ class LaporanController extends Controller
     public function mutasiStokPengguna()
     {
         $user = Auth::user();
-        
-        // Ambil data stok keluar milik pengguna ini saja
-        $stokKeluar = StokKeluar::with(['produk', 'pengguna'])
+
+        $stokKeluar = StokKeluar::with(['produk.kategori', 'pengguna'])
             ->where('id_pengguna', $user->id_pengguna)
             ->get();
 
         $mutasi = collect();
-        
+
         foreach ($stokKeluar as $keluar) {
             $mutasi->push([
                 'kode_produk' => $keluar->produk->kode_produk,
                 'nama_produk' => $keluar->produk->nama_produk,
+                'kategori' => $keluar->produk->kategori->nama_kategori ?? '-',
                 'tanggal' => $keluar->created_at,
                 'jumlah' => $keluar->jumlah
             ]);
@@ -258,18 +263,20 @@ class LaporanController extends Controller
     public function mutasiStokPenggunaPDF()
     {
         $user = Auth::user();
-        
-        $stokKeluar = StokKeluar::with(['produk', 'pengguna'])
+
+        // Tambahkan eager loading untuk kategori
+        $stokKeluar = StokKeluar::with(['produk.kategori', 'pengguna'])
             ->where('id_pengguna', $user->id_pengguna)
             ->get();
 
         $mutasi = collect();
-        
+
         foreach ($stokKeluar as $keluar) {
             $mutasi->push([
                 'kode_produk' => $keluar->produk->kode_produk,
                 'nama_produk' => $keluar->produk->nama_produk,
-                'tanggal' => $keluar->created_at,
+                'kategori' => $keluar->produk->kategori->nama_kategori ?? '-', // Tambahkan ini
+                'tanggal' => $keluar->tanggal_keluar,
                 'jumlah' => $keluar->jumlah
             ]);
         }

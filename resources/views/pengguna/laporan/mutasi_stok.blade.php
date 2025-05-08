@@ -21,6 +21,7 @@
                             <th>No</th>
                             <th>Kode Produk</th>
                             <th>Nama Produk</th>
+                            <th>Kategori</th>
                             <th>Tanggal</th>
                             <th>Jumlah</th>
                         </tr>
@@ -31,8 +32,8 @@
                                 <td class="text-center">{{ $loop->iteration }}</td>
                                 <td class="text-center">{{ $item['kode_produk'] }}</td>
                                 <td>{{ $item['nama_produk'] }}</td>
-                                <td class="text-center">{{ \Carbon\Carbon::parse($item['tanggal'])->format('d/m/Y H:i') }}
-                                </td>
+                                <td class="text-center">{{ $item['kategori'] }}</td>
+                                <td class="text-center">{{ \Carbon\Carbon::parse($item['tanggal'])->format('d/m/Y H:i') }}</td>
                                 <td class="text-center">{{ $item['jumlah'] }}</td>
                             </tr>
                         @endforeach
