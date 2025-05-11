@@ -6,12 +6,12 @@ use App\Models\Pengguna;
 use App\Models\Produk;
 use App\Models\StokKeluar;
 use App\Models\StokMasuk;
+use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
-    // method untuk menampilkan halaman dashboard
     public function index()
     {
         $totalProduk = Produk::count();
@@ -20,6 +20,9 @@ class DashboardController extends Controller
         if ($pengguna->peran == 'admin') {
             // menghitung total pengguna
             $jumlahPengguna = Pengguna::count();
+            
+            // menghitung jumlah supplier
+            $jumlahSupplier = Supplier::count();
 
             // menjumlahkan total stok masuk dari seluruh produk
             $totalStokMasuk = StokMasuk::sum('jumlah');
@@ -30,11 +33,11 @@ class DashboardController extends Controller
             // menghitung jumlah produk dengan stok kurang dari atau sama dengan stok minimal
             $produkStokMinim = Produk::whereColumn('stok', '<=', 'stok_minimal')->count();
 
-            // menampilkan view dashboard untuk admin dengan data yang dikirim
             return view('dashboard', [
                 'title' => 'Dashboard',
                 'menuDashboard' => 'active',
                 'jumlahPengguna' => $jumlahPengguna,
+                'jumlahSupplier' => $jumlahSupplier,
                 'totalProduk' => $totalProduk,
                 'totalStokMasuk' => $totalStokMasuk,
                 'totalStokKeluar' => $totalStokKeluar,

@@ -140,17 +140,21 @@
                                 <td class="text-center">
                                     {{ \Carbon\Carbon::parse($item->tanggal_masuk)->format('d/m/Y H:i') }}
                                 </td>
-                                <td class="text-center">
-                                    <a href="{{ route('stokmasukEdit', $item->id_stok_masuk) }}"
-                                        class="btn btn-warning btn-sm mb-1 mr-1" title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <button type="button" class="btn btn-danger btn-sm mb-1" data-toggle="modal"
-                                        data-target="#modalHapusStokMasuk{{ $item->id_stok_masuk }}" title="Hapus">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
+                                <td class="text-center align-middle">
+                                    <div class="d-flex justify-content-center">
+                                        <a href="{{ route('stokmasukEdit', $item->id_stok_masuk) }}"
+                                            class="btn btn-warning btn-sm mr-1" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-danger btn-sm" data-toggle="modal"
+                                            data-target="#modalHapusStokMasuk{{ $item->id_stok_masuk }}"
+                                            title="Hapus">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
                                     @include('admin.stokmasuk.modal')
                                 </td>
+
                             </tr>
                         @endforeach
                     </tbody>

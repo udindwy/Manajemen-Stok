@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Produk;
 use App\Models\Kategori;
 use App\Models\StokMasuk;
+use App\Models\StokKeluar;
+use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
@@ -45,24 +47,27 @@ class ProdukController extends Controller
     {
         // ambil semua data kategori untuk pilihan dropdown
         $kategori = Kategori::all();
+        // ambil semua data supplier untuk pilihan dropdown
+        $supplier = Supplier::orderBy('nama_supplier')->get();
 
         // siapkan data untuk dikirim ke view
         $data = [
             'title' => 'Tambah Produk',
             'MProduk' => 'active',
             'kategori' => $kategori,
+            'supplier' => $supplier,
         ];
         // tampilkan form tambah produk
         return view('admin.produk.create', $data);
     }
 
-    // Di method store
     public function store(Request $request)
     {
         // validasi input dari form
         $request->validate([
             'nama_produk' => ['required', 'regex:/[a-zA-Z]/'],
             'id_kategori' => 'required',
+            'id_supplier' => 'required',
             'stok' => 'required|integer|min:0',
             'stok_minimal' => 'required|integer|min:0',
             'deskripsi' => 'required|string',
@@ -70,6 +75,7 @@ class ProdukController extends Controller
             'nama_produk.required' => 'Nama produk tidak boleh kosong',
             'nama_produk.regex' => 'Nama produk tidak boleh hanya berisi angka',
             'id_kategori.required' => 'Kategori harus dipilih',
+            'id_supplier.required' => 'Supplier harus dipilih',
             'stok.required' => 'Stok tidak boleh kosong',
             'stok.integer' => 'Stok harus berupa angka',
             'stok.min' => 'Stok tidak boleh kurang dari 0',
@@ -84,6 +90,7 @@ class ProdukController extends Controller
         $produk = new Produk();
         $produk->nama_produk = $request->nama_produk;
         $produk->id_kategori = $request->id_kategori;
+        $produk->id_supplier = $request->id_supplier;
         $produk->stok = $request->stok;
         $produk->stok_minimal = $request->stok_minimal;
         $produk->deskripsi = $request->deskripsi;
@@ -91,14 +98,11 @@ class ProdukController extends Controller
 
         // generate kode_produk otomatis
         $produk->kode_produk = 'PRD-' . str_pad($produk->id_produk, 4, '0', STR_PAD_LEFT);
-
-        // Generate QR code dengan background putih dan ukuran lebih besar
         // Generate QR code dengan pengaturan yang dioptimalkan
-        $qrCode = QrCode::size(350)
-                       ->backgroundColor(255, 255, 255)
-                       ->margin(2)  // Margin diperbesar untuk pemindaian lebih baik
-                       ->padding(10) // Tambah padding di sekitar QR code
-                       ->generate($produk->kode_produk);
+        $qrCode = QrCode::size(100)  // Ubah dari 350 ke 100
+            ->backgroundColor(255, 255, 255)
+            ->margin(2)
+            ->generate($produk->kode_produk);
         $produk->qr_code = $qrCode;
         $produk->save();
 
@@ -179,5 +183,27 @@ class ProdukController extends Controller
             'MProdukKaryawan' => 'active'
         ];
         return view('pengguna.produk.scan', $data);
+    }
+
+    public function show($id_produk)
+    {
+        // Ambil data produk dengan relasi kategori dan supplier
+        $produk = Produk::with(['kategori', 'supplier'])->findOrFail($id_produk);
+        
+        // Hitung total stok masuk
+        $totalStokMasuk = StokMasuk::where('id_produk', $id_produk)->sum('jumlah');
+        
+        // Hitung total stok keluar
+        $totalStokKeluar = StokKeluar::where('id_produk', $id_produk)->sum('jumlah');
+
+        $data = [
+            'title' => 'Detail Produk',
+            'MProduk' => 'active',
+            'produk' => $produk,
+            'totalStokMasuk' => $totalStokMasuk,
+            'totalStokKeluar' => $totalStokKeluar
+        ];
+
+        return view('admin.produk.detail', $data);
     }
 }

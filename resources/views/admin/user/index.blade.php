@@ -41,17 +41,20 @@
                                     <td class="text-center">{{ $item->peran }}</td>
                                     <td class="text-center">
                                         {{ \Carbon\Carbon::parse($item->dibuat_pada)->format('d/m/Y H:i') }}</td>
-                                    <td class="text-center">
-                                        <a href="{{ route('userEdit', $item->id_pengguna) }}"
-                                            class="btn btn-sm btn-warning mb-1 mr-1" title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <button type="button" class="btn btn-sm btn-danger mb-1" data-toggle="modal"
-                                            data-target="#exampleModal{{ $item->id_pengguna }}" title="Hapus">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
+                                    <td class="text-center align-middle">
+                                        <div class="d-flex justify-content-center">
+                                            <a href="{{ route('userEdit', $item->id_pengguna) }}"
+                                                class="btn btn-warning btn-sm mr-1" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-danger btn-sm" data-toggle="modal"
+                                                data-target="#exampleModal{{ $item->id_pengguna }}" title="Hapus">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
                                         @include('admin.user.modal')
                                     </td>
+
                                 </tr>
                             @endforeach
                         </tbody>

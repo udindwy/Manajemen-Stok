@@ -48,115 +48,118 @@
                 </div>
             </div>
 
-            @section('scripts')
-                <script src="https://unpkg.com/html5-qrcode"></script>
-                <script>
-                    function onScanSuccess(decodedText, decodedResult) {
-                        console.log("Scanned QR Code:", decodedText);
+        @section('scripts')
+            <script src="https://unpkg.com/html5-qrcode"></script>
+            <script>
+                function onScanSuccess(decodedText, decodedResult) {
+                    console.log("Scanned QR Code:", decodedText);
 
-                        const url = `/stokkeluar/get-product/${decodedText}`;
+                    const url = `/stokkeluar/get-product/${decodedText}`;
 
-                        $.ajax({
-                            url: url,
-                            type: 'GET',
-                            success: function(response) {
-                                if (response.success) {
-                                    const produk = response.data;
-                                    $('#scannerModal').modal('hide');
-                                    if (html5QrcodeScanner) {
-                                        html5QrcodeScanner.clear();
-                                    }
-                                    window.location.href = '{{ route("stokkeluarCreate") }}?id_produk=' + produk.id_produk;
-                                } else {
-                                    $('#result').html(`
+                    $.ajax({
+                        url: url,
+                        type: 'GET',
+                        success: function(response) {
+                            if (response.success) {
+                                const produk = response.data;
+                                $('#scannerModal').modal('hide');
+                                if (html5QrcodeScanner) {
+                                    html5QrcodeScanner.clear();
+                                }
+                                window.location.href = '{{ route('stokkeluarCreate') }}?id_produk=' + produk.id_produk;
+                            } else {
+                                $('#result').html(`
                                         <div class="alert alert-danger">
                                             ${response.message}
                                         </div>
                                     `);
-                                }
-                            },
-                            error: function(xhr, status, error) {
-                                console.error("Ajax Error:", error);
-                                $('#result').html(`
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Ajax Error:", error);
+                            $('#result').html(`
                                     <div class="alert alert-danger">
                                         Terjadi kesalahan saat memproses QR code
                                     </div>
                                 `);
-                            }
-                        });
-                    }
-
-                    let html5QrcodeScanner;
-
-                    $('#scannerModal').on('shown.bs.modal', function() {
-                        html5QrcodeScanner = new Html5QrcodeScanner(
-                            "reader", {
-                                fps: 10,
-                                qrbox: {
-                                    width: 250,
-                                    height: 250
-                                },
-                                experimentalFeatures: {
-                                    useBarCodeDetectorIfSupported: true
-                                },
-                                rememberLastUsedCamera: true,
-                            }
-                        );
-                        html5QrcodeScanner.render(onScanSuccess);
-                    });
-
-                    $('#scannerModal').on('hidden.bs.modal', function() {
-                        if (html5QrcodeScanner) {
-                            html5QrcodeScanner.clear();
                         }
                     });
-                </script>
-            @endsection
+                }
 
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                        <thead class="bg-primary text-white text-center">
+                let html5QrcodeScanner;
+
+                $('#scannerModal').on('shown.bs.modal', function() {
+                    html5QrcodeScanner = new Html5QrcodeScanner(
+                        "reader", {
+                            fps: 10,
+                            qrbox: {
+                                width: 250,
+                                height: 250
+                            },
+                            experimentalFeatures: {
+                                useBarCodeDetectorIfSupported: true
+                            },
+                            rememberLastUsedCamera: true,
+                        }
+                    );
+                    html5QrcodeScanner.render(onScanSuccess);
+                });
+
+                $('#scannerModal').on('hidden.bs.modal', function() {
+                    if (html5QrcodeScanner) {
+                        html5QrcodeScanner.clear();
+                    }
+                });
+            </script>
+        @endsection
+
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead class="bg-primary text-white text-center">
+                        <tr>
+                            <th width="5%">No</th>
+                            <th width="12%">Kode Produk</th>
+                            <th>Nama Produk</th>
+                            <th>Kategori</th>
+                            <th width="10%">Jumlah Keluar</th>
+                            <th>Nama Pengguna</th>
+                            <th width="15%">Tanggal Keluar</th>
+                            <th width="10%"><i class="fas fa-cog"></i></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($stokKeluar as $item)
                             <tr>
-                                <th width="5%">No</th>
-                                <th width="12%">Kode Produk</th>
-                                <th>Nama Produk</th>
-                                <th>Kategori</th>
-                                <th width="10%">Jumlah Keluar</th>
-                                <th>Nama Pengguna</th>
-                                <th width="15%">Tanggal Keluar</th>
-                               <th width="10%"><i class="fas fa-cog"></i></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($stokKeluar as $item)
-                                <tr>
-                                    <td class="text-center">{{ $loop->iteration }}</td>
-                                    <td class="text-center">{{ $item->produk->kode_produk }}</td>
-                                    <td>{{ $item->produk->nama_produk }}</td>
-                                    <td>{{ $item->produk->kategori->nama_kategori }}</td>
-                                    <td class="text-center">{{ $item->jumlah }}</td>
-                                    <td>{{ $item->pengguna->nama }}</td>
-                                    <td class="text-center">{{ \Carbon\Carbon::parse($item->tanggal_keluar)->format('d/m/Y H:i') }}</td>
-                                    <td class="text-center">
+                                <td class="text-center">{{ $loop->iteration }}</td>
+                                <td class="text-center">{{ $item->produk->kode_produk }}</td>
+                                <td>{{ $item->produk->nama_produk }}</td>
+                                <td>{{ $item->produk->kategori->nama_kategori }}</td>
+                                <td class="text-center">{{ $item->jumlah }}</td>
+                                <td>{{ $item->pengguna->nama }}</td>
+                                <td class="text-center">
+                                    {{ \Carbon\Carbon::parse($item->tanggal_keluar)->format('d/m/Y H:i') }}</td>
+                                <td class="text-center align-middle">
+                                    <div class="d-flex justify-content-center">
                                         <a href="{{ route('stokkeluarEdit', $item->id_stok_keluar) }}"
-                                            class="btn btn-warning btn-sm mb-1 mr-1" title="Edit">
+                                            class="btn btn-warning btn-sm mr-1" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <button type="button" class="btn btn-danger btn-sm mb-1" 
-                                                data-toggle="modal"
-                                                data-target="#modalHapusStokKeluar{{ $item->id_stok_keluar }}"
-                                                title="Hapus">
+                                        <button type="button" class="btn btn-danger btn-sm" data-toggle="modal"
+                                            data-target="#modalHapusStokKeluar{{ $item->id_stok_keluar }}"
+                                            title="Hapus">
                                             <i class="fas fa-trash"></i>
                                         </button>
-                                        @include('admin.stokkeluar.modal')
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
+                                    </div>
+                                    @include('admin.stokkeluar.modal')
+                                </td>
+
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
+</div>
 @endsection

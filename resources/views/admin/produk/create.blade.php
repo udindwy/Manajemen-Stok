@@ -52,6 +52,22 @@
                             @enderror
                         </div>
                         <div class="col-xl-6 mb-3">
+                            <label for="id_supplier" class="form-label">
+                                <span class="text-danger">*</span>Supplier :
+                            </label>
+                            <select id="id_supplier" name="id_supplier" class="form-control @error('id_supplier') is-invalid @enderror">
+                                <option selected disabled>--Pilih Supplier--</option>
+                                @foreach ($supplier as $item)
+                                    <option value="{{ $item->id_supplier }}" {{ old('id_supplier') == $item->id_supplier ? 'selected' : '' }}>
+                                        {{ $item->nama_supplier }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('id_supplier')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
+                        <div class="col-xl-6 mb-3">
                             <label for="stok" class="form-label">
                                 <span class="text-danger">*</span>Stok :
                             </label>

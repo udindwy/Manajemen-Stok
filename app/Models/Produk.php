@@ -14,6 +14,7 @@ class Produk extends Model
         'nama_produk',
         'kode_produk',
         'id_kategori',
+        'id_supplier',
         'stok',
         'stok_minimal',
         'deskripsi',
@@ -24,6 +25,11 @@ class Produk extends Model
     public function kategori()
     {
         return $this->belongsTo(Kategori::class, 'id_kategori');
+    }
+
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class, 'id_supplier');
     }
 
     public function scopeStokMinim($query)

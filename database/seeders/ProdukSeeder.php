@@ -20,8 +20,6 @@ class ProdukSeeder extends Seeder
                 'stok' => 100,
                 'stok_minimal' => 20,
                 'deskripsi' => 'Beras premium per kg',
-                'dibuat_pada' => Carbon::now(),
-                'qr_code' => QrCode::size(100)->generate('PRD-0001'),
             ],
             [
                 'nama_produk' => 'Minyak Goreng',
@@ -30,8 +28,6 @@ class ProdukSeeder extends Seeder
                 'stok' => 10,
                 'stok_minimal' => 20,
                 'deskripsi' => 'Minyak goreng kemasan 1L',
-                'dibuat_pada' => Carbon::now(),
-                'qr_code' => QrCode::size(100)->generate('PRD-0002'),
             ],
             [
                 'nama_produk' => 'Gula Pasir',
@@ -40,8 +36,6 @@ class ProdukSeeder extends Seeder
                 'stok' => 75,
                 'stok_minimal' => 15,
                 'deskripsi' => 'Gula pasir per kg',
-                'dibuat_pada' => Carbon::now(),
-                'qr_code' => QrCode::size(100)->generate('PRD-0003'),
             ],
             // Minuman
             [
@@ -51,8 +45,6 @@ class ProdukSeeder extends Seeder
                 'stok' => 100,
                 'stok_minimal' => 24,
                 'deskripsi' => 'Air mineral 600ml',
-                'dibuat_pada' => Carbon::now(),
-                'qr_code' => QrCode::size(100)->generate('PRD-0004'),
             ],
             // Makanan Ringan
             [
@@ -62,8 +54,6 @@ class ProdukSeeder extends Seeder
                 'stok' => 60,
                 'stok_minimal' => 12,
                 'deskripsi' => 'Biskuit kemasan',
-                'dibuat_pada' => Carbon::now(),
-                'qr_code' => QrCode::size(100)->generate('PRD-0005'),
             ],
             // Perlengkapan Mandi
             [
@@ -73,8 +63,6 @@ class ProdukSeeder extends Seeder
                 'stok' => 48,
                 'stok_minimal' => 12,
                 'deskripsi' => 'Sabun mandi batang',
-                'dibuat_pada' => Carbon::now(),
-                'qr_code' => QrCode::size(100)->generate('PRD-0006'),
             ],
             // Bumbu Dapur
             [
@@ -84,12 +72,16 @@ class ProdukSeeder extends Seeder
                 'stok' => 36,
                 'stok_minimal' => 6,
                 'deskripsi' => 'Kecap manis 600ml',
-                'dibuat_pada' => Carbon::now(),
-                'qr_code' => QrCode::size(100)->generate('PRD-0007'),
             ],
         ];
 
         foreach ($produk as $p) {
+            $p['dibuat_pada'] = Carbon::now();
+            $p['qr_code'] = QrCode::size(100)
+                ->backgroundColor(255, 255, 255)
+                ->margin(2)
+                ->generate($p['kode_produk']);
+
             Produk::create($p);
         }
     }

@@ -8,6 +8,29 @@
 
     <div class="row">
         @if (Auth::user()->peran == 'admin')
+            <!-- Jumlah Supplier -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <a href="{{ route('supplier.index') }}" class="text-decoration-none">
+                    <div class="card border-left-info shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                        Jumlah Supplier
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        {{ $jumlahSupplier }}
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-truck fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
             <!-- Jumlah Pengguna -->
             <div class="col-xl-3 col-md-6 mb-4">
                 <a href="{{ route('user') }}" class="text-decoration-none">

@@ -10,6 +10,7 @@ use App\Http\Controllers\StokKeluarController;
 use App\Http\Controllers\NotifikasiController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\SupplierController;
 
 // route default, ketika akses url root maka arahkan ke halaman login
 Route::get('/', function () {
@@ -59,9 +60,18 @@ Route::middleware('checkLogin')->group(function () {
         Route::get('laporan/mutasi-stok-masuk/pdf', [LaporanController::class, 'mutasiStokMasukPDF'])->name('laporan.mutasi.stok.masuk.pdf');
         Route::get('laporan/mutasi-stok-keluar/pdf', [LaporanController::class, 'mutasiStokKeluarPDF'])->name('laporan.mutasi.stok.keluar.pdf');
 
+        // route kelola supplier
+        Route::get('supplier', [SupplierController::class, 'index'])->name('supplier.index');
+        Route::get('supplier/create', [SupplierController::class, 'create'])->name('supplier.create');
+        Route::post('supplier/store', [SupplierController::class, 'store'])->name('supplier.store');
+        Route::get('supplier/edit/{id_supplier}', [SupplierController::class, 'edit'])->name('supplier.edit');
+        Route::post('supplier/update/{id_supplier}', [SupplierController::class, 'update'])->name('supplier.update');
+        Route::delete('supplier/destroy/{id_supplier}', [SupplierController::class, 'destroy'])->name('supplier.destroy');
+
         // route kelola produk
         Route::get('produk/create', [ProdukController::class, 'create'])->name('produkCreate');
         Route::post('produk/store', [ProdukController::class, 'store'])->name('produkStore');
+        Route::get('produk/detail/{id_produk}', [ProdukController::class, 'show'])->name('produkDetail'); // Add this line
         Route::get('produk/edit/{id_produk}', [ProdukController::class, 'edit'])->name('produkEdit');
         Route::post('produk/update/{id_produk}', [ProdukController::class, 'update'])->name('produkUpdate');
         Route::delete('produk/destroy/{id_produk}', [ProdukController::class, 'destroy'])->name('produkDestroy');

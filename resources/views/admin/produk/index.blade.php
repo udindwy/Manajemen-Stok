@@ -43,7 +43,8 @@
                                     <td class="text-center align-middle">{{ $item->stok_minimal }}</td>
                                     <td class="text-left align-middle">{{ $item->deskripsi }}</td>
                                     <td class="text-center align-middle">
-                                        <a href="#" onclick="downloadQR('{{ $item->kode_produk }}', '{{ $item->nama_produk }}')"
+                                        <a href="#"
+                                            onclick="downloadQR('{{ $item->kode_produk }}', '{{ $item->nama_produk }}')"
                                             title="Klik untuk download QR Code">
                                             {!! $item->qr_code !!}
                                         </a>
@@ -52,16 +53,23 @@
                                         {{ \Carbon\Carbon::parse($item->dibuat_pada)->format('d/m/Y H:i') }}
                                     </td>
                                     <td class="text-center align-middle">
-                                        <a href="{{ route('produkEdit', $item->id_produk) }}"
-                                            class="btn btn-sm btn-warning mb-1 mr-1" title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <button class="btn btn-sm btn-danger mb-1" data-toggle="modal"
-                                            data-target="#modalHapusProduk{{ $item->id_produk }}" title="Hapus">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
+                                        <div class="d-flex justify-content-center">
+                                            <a href="{{ route('produkDetail', $item->id_produk) }}"
+                                                class="btn btn-sm btn-info mr-1" title="Detail">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{{ route('produkEdit', $item->id_produk) }}"
+                                                class="btn btn-sm btn-warning mr-1" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <button class="btn btn-sm btn-danger" data-toggle="modal"
+                                                data-target="#modalHapusProduk{{ $item->id_produk }}" title="Hapus">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
                                         @include('admin.produk.modal')
                                     </td>
+
                                 </tr>
                             @endforeach
                         </tbody>
@@ -78,34 +86,36 @@
             const svg = event.target.closest('a').querySelector('svg');
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
-            
+
             // Atur ukuran canvas dengan padding
             canvas.width = 350;
             canvas.height = 350;
-            
+
             const img = new Image();
             const svgData = new XMLSerializer().serializeToString(svg);
-            const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-            
+            const svgBlob = new Blob([svgData], {
+                type: 'image/svg+xml;charset=utf-8'
+            });
+
             img.onload = function() {
                 // Isi background putih
                 ctx.fillStyle = 'white';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
+
                 // Hitung padding
                 const padding = 20;
                 const size = canvas.width - (padding * 2);
-                
+
                 // Gambar QR code dengan padding
                 ctx.drawImage(img, padding, padding, size, size);
-                
+
                 // Unduh gambar
                 const link = document.createElement('a');
                 link.download = `QR-${kode}-${nama}.png`;
                 link.href = canvas.toDataURL('image/png', 1.0);
                 link.click();
             }
-            
+
             img.src = URL.createObjectURL(svgBlob);
             event.preventDefault();
             URL.revokeObjectURL(img.src);

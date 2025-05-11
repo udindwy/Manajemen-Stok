@@ -13,6 +13,7 @@ class CreateProdukTable extends Migration
             $table->string('kode_produk')->unique()->nullable();
             $table->string('nama_produk');
             $table->unsignedBigInteger('id_kategori');
+            $table->unsignedInteger('id_supplier')->nullable();
             $table->integer('stok')->default(0);
             $table->integer('stok_minimal')->default(0);
             $table->text('deskripsi')->nullable();
@@ -20,6 +21,7 @@ class CreateProdukTable extends Migration
             $table->timestamp('dibuat_pada')->useCurrent();
 
             $table->foreign('id_kategori')->references('id_kategori')->on('kategori')->onDelete('cascade');
+            $table->foreign('id_supplier')->references('id_supplier')->on('supplier')->onDelete('set null');
         });
     }
 

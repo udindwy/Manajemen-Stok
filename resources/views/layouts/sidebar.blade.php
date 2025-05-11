@@ -42,6 +42,14 @@
             </a>
         </li>
 
+        <!-- Nav Item - Supplier -->
+        <li class="nav-item {{ $MSupplier ?? '' }}">
+            <a class="nav-link" href="{{ route('supplier.index') }}">
+                <i class="fas fa-fw fa-truck"></i>
+                <span>Supplier</span>
+            </a>
+        </li>
+
         <!-- Nav Item - Stok Masuk -->
         <li class="nav-item {{ $MMasuk ?? '' }}">
             <a class="nav-link" href="{{ route('stokmasuk') }}">
