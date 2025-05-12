@@ -18,6 +18,7 @@ class LaporanController extends Controller
         $data = [
             'title' => 'Laporan',
             $user->peran == 'admin' ? "MLaporan" : "MLaporanKaryawan" => "active",
+            'kategori' => \App\Models\Kategori::all(), // Tambahkan ini untuk menyediakan data kategori
         ];
 
         // ambil data stok masuk dan stok keluar sesuai dengan peran pengguna
@@ -129,23 +130,40 @@ class LaporanController extends Controller
         return $pdf->download('laporan-mutasi-stok.pdf');
     }
 
-    public function mutasiStokMasuk()
+    public function mutasiStokMasuk(Request $request)
     {
         $data = [
             'title' => 'Laporan Stok Masuk',
             'MLaporan' => 'active',
+            'kategori' => \App\Models\Kategori::all(),
         ];
 
-        // ambil data stok masuk beserta relasi produk dan pengguna
-        $stokMasuk = StokMasuk::with(['produk', 'pengguna'])->get();
+        $query = StokMasuk::with(['produk.supplier', 'produk.kategori', 'pengguna']);
+
+        // Filter by category if selected
+        if ($request->kategori) {
+            $query->whereHas('produk', function($q) use ($request) {
+                $q->where('id_kategori', $request->kategori);
+            });
+        }
+
+        // Filter by date range if selected
+        if ($request->tanggal_awal && $request->tanggal_akhir) {
+            $query->whereBetween('tanggal_masuk', [
+                $request->tanggal_awal . ' 00:00:00',
+                $request->tanggal_akhir . ' 23:59:59'
+            ]);
+        }
+
+        $stokMasuk = $query->get();
         $mutasi = collect();
 
-        // proses data stok masuk
         foreach ($stokMasuk as $masuk) {
             $mutasi->push([
                 'kode_produk' => $masuk->produk->kode_produk,
                 'nama_produk' => $masuk->produk->nama_produk,
                 'kategori' => $masuk->produk->kategori->nama_kategori ?? '-',
+                'supplier' => $masuk->produk->supplier->nama_supplier ?? '-',
                 'tanggal' => $masuk->tanggal_masuk,
                 'jumlah' => $masuk->jumlah,
                 'sisa_stok' => $masuk->produk->stok,
@@ -153,50 +171,37 @@ class LaporanController extends Controller
             ]);
         }
 
-        // tampilkan view stok masuk
         return view('admin.laporan.mutasi_stok_masuk', $data, compact('mutasi'));
     }
 
-    public function mutasiStokKeluar()
+    public function mutasiStokMasukPDF(Request $request)
     {
-        $data = [
-            'title' => 'Laporan Stok Keluar',
-            'MLaporan' => 'active',
-        ];
+        $query = StokMasuk::with(['produk.supplier', 'produk.kategori', 'pengguna']);
 
-        // ambil data stok keluar beserta relasi produk dan pengguna
-        $stokKeluar = StokKeluar::with(['produk', 'pengguna'])->get();
-        $mutasi = collect();
+        // Filter by category if selected
+        if ($request->kategori) {
+            $query->whereHas('produk', function($q) use ($request) {
+                $q->where('id_kategori', $request->kategori);
+            });
+        }
 
-        // proses data stok keluar
-        foreach ($stokKeluar as $keluar) {
-            $mutasi->push([
-                'kode_produk' => $keluar->produk->kode_produk,
-                'nama_produk' => $keluar->produk->nama_produk,
-                'kategori' => $keluar->produk->kategori->nama_kategori ?? '-', // tambah kategori
-                'tanggal' => $keluar->tanggal_keluar,
-                'jumlah' => $keluar->jumlah,
-                'sisa_stok' => $keluar->produk->stok,
-                'nama_pengguna' => $keluar->pengguna->nama ?? '-',
+        // Filter by date range if selected
+        if ($request->tanggal_awal && $request->tanggal_akhir) {
+            $query->whereBetween('tanggal_masuk', [
+                $request->tanggal_awal . ' 00:00:00',
+                $request->tanggal_akhir . ' 23:59:59'
             ]);
         }
 
-        // tampilkan view stok keluar
-        return view('admin.laporan.mutasi_stok_keluar', $data, compact('mutasi'));
-    }
-
-    public function mutasiStokMasukPDF()
-    {
-        // ambil data stok masuk beserta relasi
-        $stokMasuk = StokMasuk::with(['produk', 'pengguna'])->get();
+        $stokMasuk = $query->get();
         $mutasi = collect();
 
-        // proses data untuk PDF
         foreach ($stokMasuk as $masuk) {
             $mutasi->push([
                 'kode_produk' => $masuk->produk->kode_produk,
                 'nama_produk' => $masuk->produk->nama_produk,
-                'kategori' => $masuk->produk->kategori->nama_kategori ?? '-', // tambah kategori
+                'kategori' => $masuk->produk->kategori->nama_kategori ?? '-',
+                'supplier' => $masuk->produk->supplier->nama_supplier ?? '-',
                 'tanggal' => $masuk->tanggal_masuk,
                 'jumlah' => $masuk->jumlah,
                 'sisa_stok' => $masuk->produk->stok,
@@ -204,43 +209,36 @@ class LaporanController extends Controller
             ]);
         }
 
-        // generate PDF
         $pdf = PDF::loadView('admin.laporan.mutasi_stok_masuk_pdf', compact('mutasi'));
         return $pdf->download('laporan-stok-masuk.pdf');
     }
 
-    public function mutasiStokKeluarPDF()
+    public function mutasiStokKeluar(Request $request)
     {
-        // ambil data stok keluar beserta relasi
-        $stokKeluar = StokKeluar::with(['produk', 'pengguna'])->get();
-        $mutasi = collect();
+        $data = [
+            'title' => 'Laporan Stok Keluar',
+            'MLaporan' => 'active',
+            'kategori' => \App\Models\Kategori::all(),
+        ];
 
-        // proses data untuk PDF
-        foreach ($stokKeluar as $keluar) {
-            $mutasi->push([
-                'kode_produk' => $keluar->produk->kode_produk,
-                'nama_produk' => $keluar->produk->nama_produk,
-                'kategori' => $keluar->produk->kategori->nama_kategori ?? '-', // tambah kategori
-                'tanggal' => $keluar->tanggal_keluar,
-                'jumlah' => $keluar->jumlah,
-                'sisa_stok' => $keluar->produk->stok,
-                'nama_pengguna' => $keluar->pengguna->nama ?? '-',
+        $query = StokKeluar::with(['produk.kategori', 'pengguna']);
+
+        // Filter by category if selected
+        if ($request->kategori) {
+            $query->whereHas('produk', function($q) use ($request) {
+                $q->where('id_kategori', $request->kategori);
+            });
+        }
+
+        // Filter by date range if selected
+        if ($request->tanggal_awal && $request->tanggal_akhir) {
+            $query->whereBetween('tanggal_keluar', [
+                $request->tanggal_awal . ' 00:00:00',
+                $request->tanggal_akhir . ' 23:59:59'
             ]);
         }
 
-        // generate PDF
-        $pdf = PDF::loadView('admin.laporan.mutasi_stok_keluar_pdf', compact('mutasi'));
-        return $pdf->download('laporan-stok-keluar.pdf');
-    }
-
-    public function mutasiStokPengguna()
-    {
-        $user = Auth::user();
-
-        $stokKeluar = StokKeluar::with(['produk.kategori', 'pengguna'])
-            ->where('id_pengguna', $user->id_pengguna)
-            ->get();
-
+        $stokKeluar = $query->get();
         $mutasi = collect();
 
         foreach ($stokKeluar as $keluar) {
@@ -248,7 +246,89 @@ class LaporanController extends Controller
                 'kode_produk' => $keluar->produk->kode_produk,
                 'nama_produk' => $keluar->produk->nama_produk,
                 'kategori' => $keluar->produk->kategori->nama_kategori ?? '-',
-                'tanggal' => $keluar->created_at,
+                'tanggal' => $keluar->tanggal_keluar,
+                'jumlah' => $keluar->jumlah,
+                'sisa_stok' => $keluar->produk->stok,
+                'nama_pengguna' => $keluar->pengguna->nama ?? '-',
+            ]);
+        }
+
+        return view('admin.laporan.mutasi_stok_keluar', $data, compact('mutasi'));
+    }
+
+    public function mutasiStokKeluarPDF(Request $request)
+    {
+        $query = StokKeluar::with(['produk.kategori', 'pengguna']);
+
+        // Filter by category if selected
+        if ($request->kategori) {
+            $query->whereHas('produk', function($q) use ($request) {
+                $q->where('id_kategori', $request->kategori);
+            });
+        }
+
+        // Filter by date range if selected
+        if ($request->tanggal_awal && $request->tanggal_akhir) {
+            $query->whereBetween('tanggal_keluar', [
+                $request->tanggal_awal . ' 00:00:00',
+                $request->tanggal_akhir . ' 23:59:59'
+            ]);
+        }
+
+        $stokKeluar = $query->get();
+        $mutasi = collect();
+
+        foreach ($stokKeluar as $keluar) {
+            $mutasi->push([
+                'kode_produk' => $keluar->produk->kode_produk,
+                'nama_produk' => $keluar->produk->nama_produk,
+                'kategori' => $keluar->produk->kategori->nama_kategori ?? '-',
+                'tanggal' => $keluar->tanggal_keluar,
+                'jumlah' => $keluar->jumlah,
+                'sisa_stok' => $keluar->produk->stok,
+                'nama_pengguna' => $keluar->pengguna->nama ?? '-',
+            ]);
+        }
+
+        $data = [
+            'mutasi' => $mutasi,
+            'tanggal_awal' => $request->tanggal_awal,
+            'tanggal_akhir' => $request->tanggal_akhir
+        ];
+
+        $pdf = PDF::loadView('admin.laporan.mutasi_stok_keluar_pdf', $data);
+        return $pdf->download('laporan-stok-keluar.pdf');
+    }
+
+    public function mutasiStokPengguna(Request $request)
+    {
+        $user = Auth::user();
+        
+        $query = StokKeluar::with(['produk.kategori', 'pengguna'])
+            ->where('id_pengguna', $user->id_pengguna);
+
+        if ($request->kategori) {
+            $query->whereHas('produk', function($q) use ($request) {
+                $q->where('id_kategori', $request->kategori);
+            });
+        }
+
+        if ($request->tanggal_awal && $request->tanggal_akhir) {
+            $query->whereBetween('tanggal_keluar', [
+                $request->tanggal_awal . ' 00:00:00',
+                $request->tanggal_akhir . ' 23:59:59'
+            ]);
+        }
+
+        $stokKeluar = $query->get();
+        $mutasi = collect();
+
+        foreach ($stokKeluar as $keluar) {
+            $mutasi->push([
+                'kode_produk' => $keluar->produk->kode_produk,
+                'nama_produk' => $keluar->produk->nama_produk,
+                'kategori' => $keluar->produk->kategori->nama_kategori ?? '-',
+                'tanggal' => $keluar->tanggal_keluar,
                 'jumlah' => $keluar->jumlah
             ]);
         }
@@ -256,35 +336,53 @@ class LaporanController extends Controller
         return view('pengguna.laporan.mutasi_stok', [
             'title' => 'Mutasi Stok Saya',
             'MLaporanKaryawan' => 'active',
+            'kategori' => \App\Models\Kategori::all(), // Add this line to pass categories
             'mutasi' => $mutasi
         ]);
     }
 
-    public function mutasiStokPenggunaPDF()
+    public function mutasiStokPDF(Request $request)
     {
-        $user = Auth::user();
+        $pengguna = Auth::user();
+        
+        $query = StokKeluar::with(['produk.kategori', 'pengguna'])
+            ->where('id_pengguna', $pengguna->id_pengguna);
 
-        // Tambahkan eager loading untuk kategori
-        $stokKeluar = StokKeluar::with(['produk.kategori', 'pengguna'])
-            ->where('id_pengguna', $user->id_pengguna)
-            ->get();
+        // Filter berdasarkan kategori jika dipilih
+        if ($request->kategori) {
+            $query->whereHas('produk', function($q) use ($request) {
+                $q->where('id_kategori', $request->kategori);
+            });
+        }
 
+        // Filter berdasarkan rentang tanggal jika dipilih
+        if ($request->tanggal_awal && $request->tanggal_akhir) {
+            $query->whereBetween('tanggal_keluar', [
+                $request->tanggal_awal . ' 00:00:00',
+                $request->tanggal_akhir . ' 23:59:59'
+            ]);
+        }
+
+        $stokKeluar = $query->get();
         $mutasi = collect();
 
         foreach ($stokKeluar as $keluar) {
             $mutasi->push([
                 'kode_produk' => $keluar->produk->kode_produk,
                 'nama_produk' => $keluar->produk->nama_produk,
-                'kategori' => $keluar->produk->kategori->nama_kategori ?? '-', // Tambahkan ini
+                'kategori' => $keluar->produk->kategori->nama_kategori ?? '-',
                 'tanggal' => $keluar->tanggal_keluar,
                 'jumlah' => $keluar->jumlah
             ]);
         }
 
-        $pdf = PDF::loadView('pengguna.laporan.mutasi_stok_pdf', [
-            'mutasi' => $mutasi
-        ]);
+        $data = [
+            'mutasi' => $mutasi,
+            'tanggal_awal' => $request->tanggal_awal,
+            'tanggal_akhir' => $request->tanggal_akhir
+        ];
 
-        return $pdf->download('mutasi-stok-' . date('Y-m-d') . '.pdf');
+        $pdf = PDF::loadView('pengguna.laporan.mutasi_stok_pdf', $data);
+        return $pdf->download('laporan-mutasi-stok-' . date('Y-m-d') . '.pdf');
     }
 }

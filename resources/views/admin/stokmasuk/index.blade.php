@@ -122,6 +122,7 @@
                             <th width="12%">Kode Produk</th>
                             <th>Nama Produk</th>
                             <th>Kategori</th>
+                            <th>Supplier</th>
                             <th width="10%">Jumlah Masuk</th>
                             <th>Nama Pengguna</th>
                             <th width="15%">Tanggal Masuk</th>
@@ -135,6 +136,7 @@
                                 <td class="text-center">{{ $item->produk->kode_produk }}</td>
                                 <td>{{ $item->produk->nama_produk }}</td>
                                 <td>{{ $item->produk->kategori->nama_kategori }}</td>
+                                <td>{{ $item->produk->supplier->nama_supplier ?? '-' }}</td>
                                 <td class="text-center">{{ $item->jumlah }}</td>
                                 <td>{{ $item->pengguna->nama }}</td>
                                 <td class="text-center">

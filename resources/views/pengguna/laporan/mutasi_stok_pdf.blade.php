@@ -45,6 +45,13 @@
 <body>
     <h3>Laporan Mutasi Stok</h3>
 
+    @if(isset($tanggal_awal) && isset($tanggal_akhir))
+        <p style="text-align: center">
+            Periode: {{ \Carbon\Carbon::parse($tanggal_awal)->format('d/m/Y') }} - 
+                    {{ \Carbon\Carbon::parse($tanggal_akhir)->format('d/m/Y') }}
+        </p>
+    @endif
+
     <table>
         <thead>
             <tr>

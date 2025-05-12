@@ -14,8 +14,8 @@ class StokMasukController extends Controller
     {
         $data = [
             'title' => 'Stok Masuk',
-            "MMasuk" => "active", // menandai menu stok masuk aktif
-            'stokMasuk'  => StokMasuk::get(), // ambil semua data stok masuk
+            "MMasuk" => "active",
+            'stokMasuk'  => StokMasuk::with(['produk.supplier'])->get(), // Add supplier relation
         ];
         return view('admin.stokmasuk.index', $data);
     }

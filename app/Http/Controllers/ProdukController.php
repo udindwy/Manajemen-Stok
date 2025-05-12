@@ -13,23 +13,40 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class ProdukController extends Controller 
 {
-    public function index()
+    public function index(Request $request)
     {
-        // ambil data user yang sedang login
         $user = Auth::user();
 
-        // ambil semua data produk beserta kategori-nya
-        $produk = Produk::with('kategori')->get();
+        // Start query builder with relationships
+        $query = Produk::with(['kategori']);
 
-        // jika user adalah admin
+        // Filter by category
+        if ($request->kategori) {
+            $query->where('id_kategori', $request->kategori);
+        }
+
+        // Filter by stock
+        if ($request->stok) {
+            switch ($request->stok) {
+                case 'low':
+                    $query->whereColumn('stok', '<=', 'stok_minimal');
+                    break;
+                case 'normal':
+                    $query->whereColumn('stok', '>', 'stok_minimal');
+                    break;
+            }
+        }
+
+        // Get filtered products
+        $produk = $query->get();
+
         if ($user->peran == 'admin') {
             $data = [
                 'title' => 'Produk',
                 "MProduk" => "active",
-                // ambil semua data produk (tanpa relasi)
-                'produk'  => Produk::get(),
+                'produk' => $produk,
+                'kategori' => Kategori::all(),
             ];
-            // tampilkan view produk untuk admin
             return view('admin.produk.index', $data);
         } else {
             // jika user bukan admin (pengguna/karyawan)
@@ -37,6 +54,7 @@ class ProdukController extends Controller
                 'title' => 'Produk',
                 "MProdukKaryawan" => "active",
                 'produk'  => $produk,
+                'kategori' => Kategori::all(), // Add this line
             ];
             // tampilkan view produk untuk pengguna
             return view('pengguna.produk.index', $data);
@@ -121,11 +139,12 @@ class ProdukController extends Controller
 
     public function edit($id_produk)
     {
-        // siapkan data produk dan kategori untuk form edit
+        // siapkan data produk, kategori dan supplier untuk form edit
         $data = [
             'title' => 'Edit Produk',
             'MProduk' => 'active',
             'kategori' => Kategori::all(),
+            'supplier' => Supplier::orderBy('nama_supplier')->get(),
             'produk' => Produk::findOrFail($id_produk),
         ];
         // tampilkan form edit produk
@@ -138,13 +157,14 @@ class ProdukController extends Controller
         $request->validate([
             'nama_produk' => 'required',
             'id_kategori' => 'required',
+            'id_supplier' => 'required',
             'stok' => 'required|integer',
             'stok_minimal' => 'required|integer',
             'deskripsi' => 'required|string',
         ], [
-            // pesan validasi custom
             'nama_produk.required' => 'Nama produk tidak boleh kosong',
             'id_kategori.required' => 'Kategori harus dipilih',
+            'id_supplier.required' => 'Supplier harus dipilih',
             'stok.required' => 'Stok tidak boleh kosong',
             'stok.integer' => 'Stok harus berupa angka',
             'stok_minimal.required' => 'Stok minimal tidak boleh kosong',
@@ -157,6 +177,7 @@ class ProdukController extends Controller
         $produk = Produk::findOrFail($id_produk);
         $produk->nama_produk = $request->nama_produk;
         $produk->id_kategori = $request->id_kategori;
+        $produk->id_supplier = $request->id_supplier;
         $produk->stok = $request->stok;
         $produk->stok_minimal = $request->stok_minimal;
         $produk->deskripsi = $request->deskripsi;

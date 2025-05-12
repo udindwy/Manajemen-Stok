@@ -44,6 +44,12 @@
 
 <body>
     <h3>Laporan Stok Masuk</h3>
+    @if(request('tanggal_awal') && request('tanggal_akhir'))
+        <p style="text-align: center">
+            Periode: {{ \Carbon\Carbon::parse(request('tanggal_awal'))->format('d/m/Y') }} - 
+                    {{ \Carbon\Carbon::parse(request('tanggal_akhir'))->format('d/m/Y') }}
+        </p>
+    @endif
 
     <table>
         <thead>
@@ -52,6 +58,7 @@
                 <th>Kode Produk</th>
                 <th>Nama Produk</th>
                 <th>Kategori</th>
+                <th>Supplier</th>
                 <th>Tanggal</th>
                 <th>Nama Pengguna</th>
                 <th>Jumlah</th>
@@ -66,6 +73,7 @@
                     <td class="text-center">{{ $item['kode_produk'] }}</td>
                     <td class="text-left">{{ $item['nama_produk'] }}</td>
                     <td class="text-left">{{ $item['kategori'] }}</td>
+                    <td class="text-left">{{ $item['supplier'] }}</td>
                     <td class="text-center">{{ \Carbon\Carbon::parse($item['tanggal'])->format('d/m/Y H:i') }}</td>
                     <td class="text-left">{{ $item['nama_pengguna'] }}</td>
                     <td class="text-center">{{ $item['jumlah'] }}</td>

@@ -9,10 +9,38 @@
 
         <!-- DataTales Example -->
         <div class="card shadow mb-4">
-            <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                <a href="{{ route('produkCreate') }}" class="btn btn-sm btn-primary">
-                    <i class="fas fa-plus fa-sm mr-2"></i>Tambah Produk
-                </a>
+            <div class="card-header py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <a href="{{ route('produkCreate') }}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-plus fa-sm mr-2"></i>Tambah Produk
+                    </a>
+                </div>
+                
+                <form action="{{ route('produk') }}" method="GET" class="mt-3">
+                    <div class="row">
+                        <div class="col-md-5 mb-3">
+                            <select name="kategori" class="form-control">
+                                <option value="">Semua Kategori</option>
+                                @foreach($kategori as $kat)
+                                    <option value="{{ $kat->id_kategori }}" {{ request('kategori') == $kat->id_kategori ? 'selected' : '' }}>
+                                        {{ $kat->nama_kategori }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-5 mb-3">
+                            <select name="stok" class="form-control">
+                                <option value="">Semua Stok</option>
+                                <option value="low" {{ request('stok') == 'low' ? 'selected' : '' }}>Stok Menipis</option>
+                                <option value="normal" {{ request('stok') == 'normal' ? 'selected' : '' }}>Stok Normal</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 mb-3">
+                            <button type="submit" class="btn btn-primary mr-2">Filter</button>
+                            <a href="{{ route('produk') }}" class="btn btn-secondary">Reset</a>
+                        </div>
+                    </div>
+                </form>
             </div>
 
             <div class="card-body">

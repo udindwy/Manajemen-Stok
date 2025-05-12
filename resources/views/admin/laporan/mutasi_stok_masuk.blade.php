@@ -7,10 +7,34 @@
     </h1>
 
     <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <a href="{{ route('laporan.mutasi.stok.masuk.pdf') }}" class="btn btn-sm btn-danger">
-                <i class="fas fa-file-pdf mr-2"></i>PDF
-            </a>
+        <div class="card-header">
+            <form action="{{ route('laporan.mutasi.stok.masuk') }}" method="GET" class="row align-items-end">
+                <div class="col-md-3 mb-3">
+                    <select name="kategori" class="form-control" title="Pilih Kategori">
+                        <option value="">Semua Kategori</option>
+                        @foreach ($kategori as $kat)
+                            <option value="{{ $kat->id_kategori }}"
+                                {{ request('kategori') == $kat->id_kategori ? 'selected' : '' }}>
+                                {{ $kat->nama_kategori }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <input type="date" name="tanggal_awal" class="form-control" value="{{ request('tanggal_awal') }}">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <input type="date" name="tanggal_akhir" class="form-control" value="{{ request('tanggal_akhir') }}">
+                </div>
+                <div class="col-md-3 mb-3 d-flex justify-content-start">
+                    <button type="submit" class="btn btn-primary mr-1">Filter</button>
+                    <a href="{{ route('laporan.mutasi.stok.masuk') }}" class="btn btn-secondary mr-1">Reset</a>
+                    <a href="{{ route('laporan.mutasi.stok.masuk.pdf', ['kategori' => request('kategori'), 'tanggal_awal' => request('tanggal_awal'), 'tanggal_akhir' => request('tanggal_akhir')]) }}"
+                        class="btn btn-danger">
+                        <i class="fas fa-file-pdf mr-1"></i>PDF
+                    </a>
+                </div>
+            </form>
         </div>
 
         <div class="card-body">
@@ -22,6 +46,7 @@
                             <th>Kode Produk</th>
                             <th>Nama Produk</th>
                             <th>Kategori</th>
+                            <th>Supplier</th>
                             <th>Tanggal</th>
                             <th>Nama Pengguna</th>
                             <th>Jumlah</th>
@@ -36,7 +61,9 @@
                                 <td class="text-center">{{ $item['kode_produk'] }}</td>
                                 <td class="text-left">{{ $item['nama_produk'] }}</td>
                                 <td class="text-left">{{ $item['kategori'] }}</td>
-                                <td class="text-center">{{ \Carbon\Carbon::parse($item['tanggal'])->format('d/m/Y H:i') }}</td>
+                                <td class="text-left">{{ $item['supplier'] }}</td>
+                                <td class="text-center">{{ \Carbon\Carbon::parse($item['tanggal'])->format('d/m/Y H:i') }}
+                                </td>
                                 <td class="text-left">{{ $item['nama_pengguna'] }}</td>
                                 <td class="text-center">{{ $item['jumlah'] }}</td>
                                 <td class="text-center">{{ $item['sisa_stok'] }}</td>
