@@ -9,20 +9,22 @@
 
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div>
-                        <a href="{{ route('stokkeluar') }}" class="btn btn-primary btn-sm mr-2">
+                <!-- Action Buttons -->
+                <div class="d-sm-flex align-items-center justify-content-between">
+                    <div class="d-flex flex-wrap gap-2 mb-3 mb-sm-0">
+                        <a href="{{ route('stokkeluar') }}" class="btn btn-primary btn-sm mb-2 mb-sm-0 mr-2">
                             <i class="fas fa-plus fa-sm mr-2"></i>Transaksi
                         </a>
-                        <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#scannerModal">
+                        <button type="button" class="btn btn-info btn-sm mb-2 mb-sm-0" data-toggle="modal" data-target="#scannerModal">
                             <i class="fas fa-qrcode fa-sm mr-2"></i>Scan QR Code
                         </button>
                     </div>
                 </div>
 
+                <!-- Filter Form -->
                 <form action="{{ route('produk') }}" method="GET" class="mt-3">
                     <div class="row">
-                        <div class="col-md-5 mb-3">
+                        <div class="col-lg-5 col-md-6 col-sm-12 mb-3">
                             <select name="kategori" class="form-control">
                                 <option value="">Semua Kategori</option>
                                 @foreach($kategori as $kat)
@@ -32,16 +34,18 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-5 mb-3">
+                        <div class="col-lg-5 col-md-6 col-sm-12 mb-3">
                             <select name="stok" class="form-control">
                                 <option value="">Semua Stok</option>
                                 <option value="low" {{ request('stok') == 'low' ? 'selected' : '' }}>Stok Menipis</option>
                                 <option value="normal" {{ request('stok') == 'normal' ? 'selected' : '' }}>Stok Normal</option>
                             </select>
                         </div>
-                        <div class="col-md-2 mb-3">
-                            <button type="submit" class="btn btn-primary mr-2">Filter</button>
-                            <a href="{{ route('produk') }}" class="btn btn-secondary">Reset</a>
+                        <div class="col-lg-2 col-md-12 col-sm-12 mb-3">
+                            <div class="d-flex flex-wrap gap-2">
+                                <button type="submit" class="btn btn-primary mb-2 mb-sm-0 mr-2">Filter</button>
+                                <a href="{{ route('produk') }}" class="btn btn-secondary mb-2 mb-sm-0">Reset</a>
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -49,7 +53,7 @@
 
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
                         <thead class="bg-primary text-white text-center">
                             <tr>
                                 <th width="5%">No</th>

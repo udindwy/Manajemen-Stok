@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Produk;
-use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
@@ -11,78 +10,73 @@ class ProdukSeeder extends Seeder
 {
     public function run()
     {
-        $produk = [
-            // Sembako
+        $produks = [
             [
-                'nama_produk' => 'Beras Premium',
-                'kode_produk' => 'PRD-0001',
+                'nama_produk' => 'Bahan Kimia A',
+                'kode_produk' => 'BKU001',
                 'id_kategori' => 1,
-                'stok' => 100,
-                'stok_minimal' => 20,
-                'deskripsi' => 'Beras premium per kg',
+                'id_supplier' => 1,
+                'stok' => 1000,
+                'stok_minimal' => 200,
+                'deskripsi' => 'Bahan kimia utama untuk produksi',
+                'dibuat_pada' => now(),
             ],
             [
-                'nama_produk' => 'Minyak Goreng',
-                'kode_produk' => 'PRD-0002',
-                'id_kategori' => 1,
-                'stok' => 10,
-                'stok_minimal' => 20,
-                'deskripsi' => 'Minyak goreng kemasan 1L',
-            ],
-            [
-                'nama_produk' => 'Gula Pasir',
-                'kode_produk' => 'PRD-0003',
-                'id_kategori' => 1,
-                'stok' => 75,
-                'stok_minimal' => 15,
-                'deskripsi' => 'Gula pasir per kg',
-            ],
-            // Minuman
-            [
-                'nama_produk' => 'Air Mineral',
-                'kode_produk' => 'PRD-0004',
+                'nama_produk' => 'Bahan Tambahan X',
+                'kode_produk' => 'BTP001',
                 'id_kategori' => 2,
-                'stok' => 100,
-                'stok_minimal' => 24,
-                'deskripsi' => 'Air mineral 600ml',
+                'id_supplier' => 4,
+                'stok' => 500,
+                'stok_minimal' => 100,
+                'deskripsi' => 'Bahan tambahan untuk stabilizer',
+                'dibuat_pada' => now(),
             ],
-            // Makanan Ringan
             [
-                'nama_produk' => 'Biskuit',
-                'kode_produk' => 'PRD-0005',
+                'nama_produk' => 'Kemasan Botol 100ml',
+                'kode_produk' => 'KMS001',
                 'id_kategori' => 3,
-                'stok' => 60,
-                'stok_minimal' => 12,
-                'deskripsi' => 'Biskuit kemasan',
+                'id_supplier' => 2,
+                'stok' => 5000,
+                'stok_minimal' => 1000,
+                'deskripsi' => 'Botol plastik ukuran 100ml',
+                'dibuat_pada' => now(),
             ],
-            // Perlengkapan Mandi
             [
-                'nama_produk' => 'Sabun Mandi',
-                'kode_produk' => 'PRD-0006',
+                'nama_produk' => 'Produk A Setengah Jadi',
+                'kode_produk' => 'PSJ001',
                 'id_kategori' => 4,
-                'stok' => 48,
-                'stok_minimal' => 12,
-                'deskripsi' => 'Sabun mandi batang',
+                'id_supplier' => 1,
+                'stok' => 200,
+                'stok_minimal' => 50,
+                'deskripsi' => 'Produk A tahap intermediate',
+                'dibuat_pada' => now(),
             ],
-            // Bumbu Dapur
             [
-                'nama_produk' => 'Kecap Manis',
-                'kode_produk' => 'PRD-0007',
+                'nama_produk' => 'Produk A Final',
+                'kode_produk' => 'PJD001',
                 'id_kategori' => 5,
-                'stok' => 36,
-                'stok_minimal' => 6,
-                'deskripsi' => 'Kecap manis 600ml',
+                'id_supplier' => 1,
+                'stok' => 300,
+                'stok_minimal' => 100,
+                'deskripsi' => 'Produk A siap distribusi',
+                'dibuat_pada' => now(),
             ],
+            [
+                'nama_produk' => 'Mesin Mixer 500L',
+                'kode_produk' => 'ALP001',
+                'id_kategori' => 6,
+                'id_supplier' => 3,
+                'stok' => 2,
+                'stok_minimal' => 1,
+                'deskripsi' => 'Mesin pencampur kapasitas 500L',
+                'dibuat_pada' => now(),
+            ]
         ];
 
-        foreach ($produk as $p) {
-            $p['dibuat_pada'] = Carbon::now();
-            $p['qr_code'] = QrCode::size(100)
-                ->backgroundColor(255, 255, 255)
-                ->margin(2)
-                ->generate($p['kode_produk']);
-
-            Produk::create($p);
+        foreach ($produks as $produk) {
+            $qrCode = QrCode::size(100)->generate($produk['kode_produk']);
+            $produk['qr_code'] = $qrCode;
+            Produk::create($produk);
         }
     }
 }

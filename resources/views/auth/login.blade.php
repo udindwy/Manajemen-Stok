@@ -21,46 +21,58 @@
 
 <body class="bg-gradient-primary">
     <div class="container">
-        <!-- Outer Row -->
-        <div class="row justify-content-center">
-            <div class="col-xl-6 col-lg-7 col-md-9">
-                <div class="card o-hidden border-0 shadow-lg my-5">
+        <div class="row justify-content-center min-vh-100 align-items-center">
+            <div class="col-xl-5 col-lg-6 col-md-8">
+                <div class="card o-hidden border-0 shadow-lg">
                     <div class="card-body p-0">
-                        <!-- Nested Row within Card Body -->
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <div class="p-5">
-                                    <div class="text-center">
-                                        <h1 class="h4 text-gray-900 mb-4">
-                                            <i class="fas fa-boxes mr-2"></i>M-Stok | Login
-                                        </h1>
+                        <div class="p-5">
+                            <div class="text-center mb-4">
+                                <i class="fas fa-boxes fa-3x text-primary mb-3"></i>
+                                <h1 class="h3 text-gray-900 font-weight-bold">M-STOK</h1>
+                            </div>
+                            <form class="user" method="POST" action="{{ route('loginProses') }}">
+                                @csrf
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text bg-primary border-0">
+                                                <i class="fas fa-envelope text-white"></i>
+                                            </span>
+                                        </div>
+                                        <input type="email" name="email" 
+                                            class="form-control form-control-user @error('email') is-invalid @enderror"
+                                            placeholder="Masukkan Email" value="{{ old('email') }}">
+                                        @error('email')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
-                                    <form class="user" method="POST" action="{{ route('loginProses') }}">
-                                        @csrf
-                                        <div class="form-group">
-                                            <input type="email" name="email" 
-                                                class="form-control form-control-user @error('email') is-invalid @enderror"
-                                                placeholder="Masukkan Email" value="{{ old('email') }}">
-                                            @error('email')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-
-                                        <div class="form-group">
-                                            <input type="password" name="password"
-                                                class="form-control form-control-user @error('password') is-invalid @enderror"
-                                                placeholder="Masukkan Password">
-                                            @error('password')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-
-                                        <button type="submit" class="btn btn-primary btn-user btn-block">
-                                            <i class="fas fa-sign-in-alt mr-2"></i>Login
-                                        </button>
-                                    </form>
-                                    <hr>
                                 </div>
+
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text bg-primary border-0">
+                                                <i class="fas fa-lock text-white"></i>
+                                            </span>
+                                        </div>
+                                        <input type="password" name="password"
+                                            class="form-control form-control-user @error('password') is-invalid @enderror"
+                                            placeholder="Masukkan Password">
+                                        @error('password')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary btn-user btn-block py-2 font-weight-bold">
+                                    <i class="fas fa-sign-in-alt mr-2"></i>Login
+                                </button>
+                            </form>
+                            <hr>
+                            <div class="text-center">
+                                <small class="text-muted">
+                                    &copy; {{ date('Y') }} M-Stok. All rights reserved.
+                                </small>
                             </div>
                         </div>
                     </div>
@@ -69,14 +81,11 @@
         </div>
     </div>
 
+    <!-- Scripts remain unchanged -->
     <!-- Bootstrap core JavaScript-->
     <script src="{{ asset('assets/vendor/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-
-    <!-- Core plugin JavaScript-->
     <script src="{{ asset('assets/vendor/jquery-easing/jquery.easing.min.js') }}"></script>
-
-    <!-- Custom scripts for all pages-->
     <script src="{{ asset('assets/js/sb-admin-2.min.js') }}"></script>
     <script src="{{ asset('sweetalert2/package/dist/sweetalert2.all.min.js') }}"></script>
 

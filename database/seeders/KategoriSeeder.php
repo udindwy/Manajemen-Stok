@@ -3,26 +3,27 @@
 namespace Database\Seeders;
 
 use App\Models\Kategori;
-use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 
 class KategoriSeeder extends Seeder
 {
     public function run()
     {
-        $kategori = [
-            ['nama_kategori' => 'Sembako', 'dibuat_pada' => Carbon::now()],
-            ['nama_kategori' => 'Minuman', 'dibuat_pada' => Carbon::now()],
-            ['nama_kategori' => 'Makanan Ringan', 'dibuat_pada' => Carbon::now()],
-            ['nama_kategori' => 'Perlengkapan Mandi', 'dibuat_pada' => Carbon::now()],
-            ['nama_kategori' => 'Bumbu Dapur', 'dibuat_pada' => Carbon::now()],
-            ['nama_kategori' => 'Perlengkapan Rumah', 'dibuat_pada' => Carbon::now()],
-            ['nama_kategori' => 'Perlengkapan Bayi', 'dibuat_pada' => Carbon::now()],
-            ['nama_kategori' => 'Obat-obatan', 'dibuat_pada' => Carbon::now()],
+        $kategoris = [
+            'Bahan Baku Utama',
+            'Bahan Baku Pendukung',
+            'Bahan Pengemasan',
+            'Produk Setengah Jadi',
+            'Produk Jadi',
+            'Peralatan Produksi',
+            'Perlengkapan Pendukung'
         ];
 
-        foreach ($kategori as $k) {
-            Kategori::create($k);
+        foreach ($kategoris as $kategori) {
+            Kategori::create([
+                'nama_kategori' => $kategori,
+                'dibuat_pada' => now()
+            ]);
         }
     }
 }

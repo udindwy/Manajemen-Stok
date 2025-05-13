@@ -8,14 +8,16 @@
         </h1>
 
         <div class="card shadow mb-4">
-            <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                <div>
-                    <a href="{{ route('stokkeluarCreate') }}" class="btn btn-primary btn-sm mr-2">
-                        <i class="fas fa-plus fa-sm mr-2"></i>Tambah Stok Keluar
-                    </a>
-                    <button class="btn btn-info btn-sm" data-toggle="modal" data-target="#scannerModal">
-                        <i class="fas fa-qrcode fa-sm mr-2"></i>Scan QR Code
-                    </button>
+            <div class="card-header py-3">
+                <div class="d-sm-flex align-items-center justify-content-between">
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="{{ route('stokkeluarCreate') }}" class="btn btn-primary btn-sm mb-2 mb-sm-0 mr-2">
+                            <i class="fas fa-plus fa-sm mr-2"></i>Tambah Stok Keluar
+                        </a>
+                        <button class="btn btn-info btn-sm mb-2 mb-sm-0" data-toggle="modal" data-target="#scannerModal">
+                            <i class="fas fa-qrcode fa-sm mr-2"></i>Scan QR Code
+                        </button>
+                    </div>
                 </div>
             </div>
 
