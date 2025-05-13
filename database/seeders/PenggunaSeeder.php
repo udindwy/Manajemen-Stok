@@ -12,7 +12,7 @@ class PenggunaSeeder extends Seeder
     {
         Pengguna::create([
             'nama' => 'Administrator',
-            'email' => 'admin@admin.com',
+            'email' => 'udin.dwi@students.utdi.ac.id',
             'password' => Hash::make('admin123'),
             'peran' => 'admin',
             'dibuat_pada' => now()

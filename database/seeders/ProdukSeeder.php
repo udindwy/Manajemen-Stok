@@ -13,7 +13,7 @@ class ProdukSeeder extends Seeder
         $produks = [
             [
                 'nama_produk' => 'Bahan Kimia A',
-                'kode_produk' => 'BKU001',
+                'kode_produk' => 'PRD-0001',
                 'id_kategori' => 1,
                 'id_supplier' => 1,
                 'stok' => 1000,
@@ -23,7 +23,7 @@ class ProdukSeeder extends Seeder
             ],
             [
                 'nama_produk' => 'Bahan Tambahan X',
-                'kode_produk' => 'BTP001',
+                'kode_produk' => 'PRD-0002',
                 'id_kategori' => 2,
                 'id_supplier' => 4,
                 'stok' => 500,
@@ -33,7 +33,7 @@ class ProdukSeeder extends Seeder
             ],
             [
                 'nama_produk' => 'Kemasan Botol 100ml',
-                'kode_produk' => 'KMS001',
+                'kode_produk' => 'PRD-0003',
                 'id_kategori' => 3,
                 'id_supplier' => 2,
                 'stok' => 5000,
@@ -43,7 +43,7 @@ class ProdukSeeder extends Seeder
             ],
             [
                 'nama_produk' => 'Produk A Setengah Jadi',
-                'kode_produk' => 'PSJ001',
+                'kode_produk' => 'PRD-0004',
                 'id_kategori' => 4,
                 'id_supplier' => 1,
                 'stok' => 200,
@@ -53,7 +53,7 @@ class ProdukSeeder extends Seeder
             ],
             [
                 'nama_produk' => 'Produk A Final',
-                'kode_produk' => 'PJD001',
+                'kode_produk' => 'PRD-0005',
                 'id_kategori' => 5,
                 'id_supplier' => 1,
                 'stok' => 300,
@@ -63,7 +63,7 @@ class ProdukSeeder extends Seeder
             ],
             [
                 'nama_produk' => 'Mesin Mixer 500L',
-                'kode_produk' => 'ALP001',
+                'kode_produk' => 'PRD-0006',
                 'id_kategori' => 6,
                 'id_supplier' => 3,
                 'stok' => 2,
@@ -74,7 +74,10 @@ class ProdukSeeder extends Seeder
         ];
 
         foreach ($produks as $produk) {
-            $qrCode = QrCode::size(100)->generate($produk['kode_produk']);
+            $qrCode = QrCode::size(100)
+                ->backgroundColor(255, 255, 255)
+                ->margin(2)
+                ->generate($produk['kode_produk']);
             $produk['qr_code'] = $qrCode;
             Produk::create($produk);
         }

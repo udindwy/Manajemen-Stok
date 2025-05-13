@@ -15,14 +15,15 @@
                         <i class="fas fa-plus fa-sm mr-2"></i>Tambah Produk
                     </a>
                 </div>
-                
+
                 <form action="{{ route('produk') }}" method="GET" class="mt-3">
                     <div class="row">
                         <div class="col-md-5 mb-3">
                             <select name="kategori" class="form-control">
                                 <option value="">Semua Kategori</option>
-                                @foreach($kategori as $kat)
-                                    <option value="{{ $kat->id_kategori }}" {{ request('kategori') == $kat->id_kategori ? 'selected' : '' }}>
+                                @foreach ($kategori as $kat)
+                                    <option value="{{ $kat->id_kategori }}"
+                                        {{ request('kategori') == $kat->id_kategori ? 'selected' : '' }}>
                                         {{ $kat->nama_kategori }}
                                     </option>
                                 @endforeach
@@ -31,8 +32,10 @@
                         <div class="col-md-5 mb-3">
                             <select name="stok" class="form-control">
                                 <option value="">Semua Stok</option>
-                                <option value="low" {{ request('stok') == 'low' ? 'selected' : '' }}>Stok Menipis</option>
-                                <option value="normal" {{ request('stok') == 'normal' ? 'selected' : '' }}>Stok Normal</option>
+                                <option value="low" {{ request('stok') == 'low' ? 'selected' : '' }}>Stok Menipis
+                                </option>
+                                <option value="normal" {{ request('stok') == 'normal' ? 'selected' : '' }}>Stok Normal
+                                </option>
                             </select>
                         </div>
                         <div class="col-md-2 mb-3">

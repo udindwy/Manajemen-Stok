@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Produk;
 use App\Models\StokKeluar;
+use App\Models\Pengguna;
+use App\Notifications\StokMinimalNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -94,6 +96,15 @@ class StokKeluarController extends Controller
         $produk = Produk::find($request->id_produk);
         $produk->stok -= $request->jumlah;
         $produk->save();
+
+        // Cek jika stok sudah mencapai atau di bawah batas minimal
+        if ($produk->stok <= $produk->stok_minimal) {
+            // Kirim notifikasi ke semua admin
+            $admins = Pengguna::where('peran', 'admin')->get();
+            foreach ($admins as $admin) {
+                $admin->notify(new StokMinimalNotification($produk));
+            }
+        }
 
         // Redirect ke halaman produk untuk pengguna
         if (Auth::user()->peran == 'pengguna') {

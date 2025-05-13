@@ -117,7 +117,7 @@ class ProdukController extends Controller
         // generate kode_produk otomatis
         $produk->kode_produk = 'PRD-' . str_pad($produk->id_produk, 4, '0', STR_PAD_LEFT);
         // Generate QR code dengan pengaturan yang dioptimalkan
-        $qrCode = QrCode::size(100)  // Ubah dari 350 ke 100
+        $qrCode = QrCode::size(100)
             ->backgroundColor(255, 255, 255)
             ->margin(2)
             ->generate($produk->kode_produk);
