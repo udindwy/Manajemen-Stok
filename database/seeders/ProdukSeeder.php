@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Produk;
+use App\Models\StokMasuk;
 use Illuminate\Database\Seeder;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
@@ -79,7 +80,19 @@ class ProdukSeeder extends Seeder
                 ->margin(2)
                 ->generate($produk['kode_produk']);
             $produk['qr_code'] = $qrCode;
-            Produk::create($produk);
+            
+            // simpan produk dan dapatkan instance produk yang baru dibuat
+            $newProduk = Produk::create($produk);
+
+            // catat stok masuk awal
+            if ($produk['stok'] > 0) {
+                StokMasuk::create([
+                    'id_produk' => $newProduk->id_produk,
+                    'jumlah' => $produk['stok'],
+                    'id_pengguna' => 1, // ID admin
+                    'tanggal_masuk' => now(),
+                ]);
+            }
         }
     }
 }

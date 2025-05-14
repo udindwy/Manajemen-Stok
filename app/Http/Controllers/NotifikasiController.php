@@ -15,9 +15,9 @@ class NotifikasiController extends Controller
 
         // siapkan data untuk dikirim ke view
         $data = [
-            'title' => 'Stok Minim', // judul halaman
-            "MMinim" => "active",   // aktifkan menu navigasi stok minim
-            'produkMinim' => $produkMinim, // data produk dengan stok minim
+            'title' => 'Stok Minim',
+            "MMinim" => "active",  
+            'produkMinim' => $produkMinim,
         ];
 
         // tampilkan halaman dengan data

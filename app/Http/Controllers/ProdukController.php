@@ -11,21 +11,30 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
+/**
+ * controller untuk mengelola data produk
+ * menangani operasi crud produk dan pemindaian qr code
+ */
 class ProdukController extends Controller 
 {
+    /**
+     * menampilkan daftar produk
+     * dapat difilter berdasarkan kategori dan status stok
+     */
     public function index(Request $request)
     {
+        // mengambil data pengguna yang sedang login
         $user = Auth::user();
 
-        // Start query builder with relationships
+        // memulai query dengan relasi kategori
         $query = Produk::with(['kategori']);
 
-        // Filter by category
+        // menerapkan filter kategori jika ada
         if ($request->kategori) {
             $query->where('id_kategori', $request->kategori);
         }
 
-        // Filter by stock
+        // menerapkan filter berdasarkan status stok
         if ($request->stok) {
             switch ($request->stok) {
                 case 'low':
@@ -37,9 +46,10 @@ class ProdukController extends Controller
             }
         }
 
-        // Get filtered products
+        // mengambil data produk yang sudah difilter
         $produk = $query->get();
 
+        // menyiapkan data berdasarkan peran pengguna
         if ($user->peran == 'admin') {
             $data = [
                 'title' => 'Produk',
@@ -49,36 +59,38 @@ class ProdukController extends Controller
             ];
             return view('admin.produk.index', $data);
         } else {
-            // jika user bukan admin (pengguna/karyawan)
             $data = [
                 'title' => 'Produk',
                 "MProdukKaryawan" => "active",
                 'produk'  => $produk,
-                'kategori' => Kategori::all(), // Add this line
+                'kategori' => Kategori::all(),
             ];
-            // tampilkan view produk untuk pengguna
             return view('pengguna.produk.index', $data);
         }
     }
 
+    /**
+     * menampilkan form tambah produk baru
+     */
     public function create()
     {
-        // ambil semua data kategori untuk pilihan dropdown
+        // mengambil data untuk dropdown
         $kategori = Kategori::all();
-        // ambil semua data supplier untuk pilihan dropdown
         $supplier = Supplier::orderBy('nama_supplier')->get();
 
-        // siapkan data untuk dikirim ke view
+        // menyiapkan data untuk view
         $data = [
             'title' => 'Tambah Produk',
             'MProduk' => 'active',
             'kategori' => $kategori,
             'supplier' => $supplier,
         ];
-        // tampilkan form tambah produk
         return view('admin.produk.create', $data);
     }
 
+    /**
+     * menyimpan data produk baru ke database
+     */
     public function store(Request $request)
     {
         // validasi input dari form
@@ -104,7 +116,7 @@ class ProdukController extends Controller
             'deskripsi.string' => 'Deskripsi harus berupa teks'
         ]);
 
-        // buat objek produk baru
+        // membuat dan menyimpan produk baru
         $produk = new Produk();
         $produk->nama_produk = $request->nama_produk;
         $produk->id_kategori = $request->id_kategori;
@@ -114,9 +126,8 @@ class ProdukController extends Controller
         $produk->deskripsi = $request->deskripsi;
         $produk->save();
 
-        // generate kode_produk otomatis
+        // membuat kode produk dan qr code
         $produk->kode_produk = 'PRD-' . str_pad($produk->id_produk, 4, '0', STR_PAD_LEFT);
-        // Generate QR code dengan pengaturan yang dioptimalkan
         $qrCode = QrCode::size(100)
             ->backgroundColor(255, 255, 255)
             ->margin(2)
@@ -124,7 +135,7 @@ class ProdukController extends Controller
         $produk->qr_code = $qrCode;
         $produk->save();
 
-        // Tambahkan stok masuk otomatis
+        // mencatat stok masuk awal jika ada
         if ($request->stok > 0) {
             $stokMasuk = new StokMasuk();
             $stokMasuk->id_produk = $produk->id_produk;
@@ -137,9 +148,12 @@ class ProdukController extends Controller
         return redirect()->route('produk')->with('success', 'Produk berhasil ditambahkan');
     }
 
+    /**
+     * menampilkan form edit produk
+     */
     public function edit($id_produk)
     {
-        // siapkan data produk, kategori dan supplier untuk form edit
+        // menyiapkan data untuk form edit
         $data = [
             'title' => 'Edit Produk',
             'MProduk' => 'active',
@@ -147,13 +161,15 @@ class ProdukController extends Controller
             'supplier' => Supplier::orderBy('nama_supplier')->get(),
             'produk' => Produk::findOrFail($id_produk),
         ];
-        // tampilkan form edit produk
         return view('admin.produk.edit', $data);
     }
 
+    /**
+     * menyimpan perubahan data produk
+     */
     public function update(Request $request, $id_produk)
     {
-        // validasi input dari form edit
+        // validasi input dari form
         $request->validate([
             'nama_produk' => 'required',
             'id_kategori' => 'required',
@@ -173,7 +189,7 @@ class ProdukController extends Controller
             'deskripsi.required' => 'Deskripsi tidak boleh kosong',
         ]);
 
-        // update data produk berdasarkan id
+        // memperbarui data produk
         $produk = Produk::findOrFail($id_produk);
         $produk->nama_produk = $request->nama_produk;
         $produk->id_kategori = $request->id_kategori;
@@ -183,22 +199,27 @@ class ProdukController extends Controller
         $produk->deskripsi = $request->deskripsi;
         $produk->save();
 
-        // redirect ke halaman produk dengan notifikasi sukses
         return redirect()->route('produk')->with('success', 'Produk berhasil diupdate');
     }
 
+    /**
+     * menghapus data produk
+     */
     public function destroy($id_produk)
     {
-        // ambil data produk yang akan dihapus
+        // mencari dan menghapus produk
         $produk = Produk::findOrFail($id_produk);
         $produk->delete();
 
-        // kembali ke halaman produk dengan notifikasi sukses
         return redirect()->route('produk')->with('success', 'Produk berhasil dihapus');
     }
 
+    /**
+     * menampilkan halaman pemindai qr code
+     */
     public function scan()
     {
+        // menyiapkan data untuk halaman scan
         $data = [
             'title' => 'Scan QR Code',
             'MProdukKaryawan' => 'active'
@@ -206,17 +227,19 @@ class ProdukController extends Controller
         return view('pengguna.produk.scan', $data);
     }
 
+    /**
+     * menampilkan detail produk
+     */
     public function show($id_produk)
     {
-        // Ambil data produk dengan relasi kategori dan supplier
+        // mengambil data produk dan relasinya
         $produk = Produk::with(['kategori', 'supplier'])->findOrFail($id_produk);
         
-        // Hitung total stok masuk
+        // menghitung total stok masuk dan keluar
         $totalStokMasuk = StokMasuk::where('id_produk', $id_produk)->sum('jumlah');
-        
-        // Hitung total stok keluar
         $totalStokKeluar = StokKeluar::where('id_produk', $id_produk)->sum('jumlah');
 
+        // menyiapkan data untuk view
         $data = [
             'title' => 'Detail Produk',
             'MProduk' => 'active',

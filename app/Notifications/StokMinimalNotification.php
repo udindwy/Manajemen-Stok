@@ -6,22 +6,40 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
 
+/**
+ * kelas notifikasi untuk peringatan stok minimal
+ * mengirim email ketika stok produk mencapai batas minimal
+ */
 class StokMinimalNotification extends Notification
 {
     use Queueable;
 
+    /**
+     * menyimpan data produk yang akan dikirim dalam notifikasi
+     */
     protected $produk;
 
+    /**
+     * membuat instance notifikasi baru
+     */
     public function __construct($produk)
     {
         $this->produk = $produk;
     }
 
+    /**
+     * menentukan channel pengiriman notifikasi
+     * saat ini menggunakan email
+     */
     public function via($notifiable)
     {
         return ['mail'];
     }
 
+    /**
+     * menyusun pesan email notifikasi
+     * berisi informasi produk yang stoknya minimal
+     */
     public function toMail($notifiable)
     {
         return (new MailMessage)

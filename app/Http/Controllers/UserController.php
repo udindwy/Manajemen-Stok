@@ -6,40 +6,52 @@ use App\Models\Pengguna;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
+/**
+ * controller untuk mengelola data pengguna
+ * menangani operasi crud untuk data pengguna sistem
+ */
 class UserController extends Controller
 {
-    // menampilkan semua data pengguna
+    /**
+     * menampilkan daftar pengguna
+     * diurutkan berdasarkan peran
+     */
     public function index()
     {
+        // menyiapkan data untuk tampilan
         $data = [
-            'title' => 'Data Pengguna', // judul halaman
-            'MUser' => 'active', // untuk menandai menu aktif
-            'pengguna'  => Pengguna::orderBy('peran', 'asc')->get(), // ambil semua pengguna dan urutkan berdasarkan peran
+            'title' => 'Data Pengguna',
+            'MUser' => 'active',
+            'pengguna'  => Pengguna::orderBy('peran', 'asc')->get(),
         ];
-        return view('admin.user.index', $data); // kirim data ke view
+        return view('admin.user.index', $data);
     }
 
-    // menampilkan form tambah pengguna
+    /**
+     * menampilkan form tambah pengguna baru
+     */
     public function create()
     {
+        // menyiapkan data untuk form tambah
         $data = [
-            'title' => 'Tambah Pengguna', // judul halaman
-            'MUser' => 'active', // menu aktif
+            'title' => 'Tambah Pengguna',
+            'MUser' => 'active',
         ];
-        return view('admin.user.create', $data); // kirim ke view form create
+        return view('admin.user.create', $data);
     }
 
-    // menyimpan data pengguna baru
+    /**
+     * menyimpan data pengguna baru
+     */
     public function store(Request $request)
     {
-        // validasi input
+        // validasi input dari form
         $request->validate([
             'nama' => 'required',
             'email' => 'required|unique:pengguna,email',
             'peran' => 'required',
             'password' => 'required|confirmed|min:8',
         ], [
-            // pesan error custom
             'nama.required' => 'Nama Pengguna tidak boleh kosong',
             'email.required' => 'Email tidak boleh kosong',
             'email.email' => 'Format email tidak valid',
@@ -50,40 +62,45 @@ class UserController extends Controller
             'password.confirmed' => 'Password konfirmasi tidak sama',
         ]);
 
-        // simpan data ke database
+        // membuat dan menyimpan pengguna baru
         $pengguna = new Pengguna();
         $pengguna->nama = $request->nama;
         $pengguna->email = $request->email;
         $pengguna->peran = $request->peran;
-        $pengguna->password = Hash::make($request->password); // enkripsi password
+        
+        // mengenkripsi password sebelum disimpan
+        $pengguna->password = Hash::make($request->password);
         $pengguna->save();
 
-        // redirect kembali ke halaman user dengan pesan sukses
         return redirect()->route('user')->with('success', 'Pengguna berhasil ditambahkan');
     }
 
-    // menampilkan form edit data pengguna
+    /**
+     * menampilkan form edit pengguna
+     */
     public function edit($id_pengguna)
     {
+        // menyiapkan data untuk form edit
         $data = [
-            'title' => 'Edit Pengguna', // judul halaman
-            'MUser' => 'active', // menu aktif
-            'pengguna' => Pengguna::findOrFail($id_pengguna), // cari data pengguna berdasarkan id
+            'title' => 'Edit Pengguna',
+            'MUser' => 'active',
+            'pengguna' => Pengguna::findOrFail($id_pengguna),
         ];
-        return view('admin.user.edit', $data); // tampilkan view edit
+        return view('admin.user.edit', $data);
     }
 
-    // menyimpan perubahan data pengguna
+    /**
+     * memperbarui data pengguna yang ada
+     */
     public function update(Request $request, $id_pengguna)
     {
-        // validasi input saat update
+        // validasi input dari form
         $request->validate([
             'nama' => 'required',
             'email' => 'required|unique:pengguna,email,' . $id_pengguna . ',id_pengguna',
             'peran' => 'required',
-            'password' => 'nullable|confirmed|min:8', // password boleh kosong
+            'password' => 'nullable|confirmed|min:8',
         ], [
-            // pesan error
             'nama.required' => 'Nama Pengguna tidak boleh kosong',
             'email.required' => 'Email tidak boleh kosong',
             'email.email' => 'Format email tidak valid',
@@ -94,25 +111,30 @@ class UserController extends Controller
             'password.confirmed' => 'Password konfirmasi tidak sama',
         ]);
 
-        // update data pengguna
+        // mencari dan memperbarui data pengguna
         $pengguna = Pengguna::findOrFail($id_pengguna);
         $pengguna->nama = $request->nama;
         $pengguna->email = $request->email;
         $pengguna->peran = $request->peran;
+
+        // mengenkripsi dan memperbarui password jika diisi
         if ($request->filled('password')) {
-            $pengguna->password = Hash::make($request->password); // enkripsi ulang jika password diisi
+            $pengguna->password = Hash::make($request->password);
         }
         $pengguna->save();
 
-        // redirect ke halaman user dengan pesan sukses
         return redirect()->route('user')->with('success', 'Pengguna berhasil diupdate');
     }
 
-    // menghapus data pengguna
+    /**
+     * menghapus data pengguna
+     */
     public function destroy($id_pengguna)
     {
-        $pengguna = Pengguna::findOrFail($id_pengguna); // cari pengguna
-        $pengguna->delete(); // hapus pengguna
-        return redirect()->route('user')->with('success', 'Pengguna berhasil dihapus'); // kembali dengan pesan
+        // mencari dan menghapus pengguna
+        $pengguna = Pengguna::findOrFail($id_pengguna);
+        $pengguna->delete();
+        
+        return redirect()->route('user')->with('success', 'Pengguna berhasil dihapus');
     }
 }

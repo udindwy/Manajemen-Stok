@@ -10,13 +10,23 @@ use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * controller untuk mengelola tampilan dan data dashboard
+ */
 class DashboardController extends Controller
 {
+    /**
+     * menampilkan halaman dashboard dengan data statistik
+     * memiliki 2 tampilan berbeda berdasarkan peran pengguna (admin/non-admin)
+     */
     public function index()
     {
+        // mengambil total produk untuk semua pengguna
         $totalProduk = Produk::count();
+        // mengambil data pengguna yang sedang login
         $pengguna = Auth::user();
 
+        // tampilan khusus untuk admin
         if ($pengguna->peran == 'admin') {
             // menghitung total pengguna
             $jumlahPengguna = Pengguna::count();
@@ -33,6 +43,7 @@ class DashboardController extends Controller
             // menghitung jumlah produk dengan stok kurang dari atau sama dengan stok minimal
             $produkStokMinim = Produk::whereColumn('stok', '<=', 'stok_minimal')->count();
 
+            // mengirim data ke view dashboard untuk admin
             return view('dashboard', [
                 'title' => 'Dashboard',
                 'menuDashboard' => 'active',
@@ -43,15 +54,19 @@ class DashboardController extends Controller
                 'totalStokKeluar' => $totalStokKeluar,
                 'produkStokMinim' => $produkStokMinim,
             ]);
-        } else {
+        } 
+        // tampilan untuk pengguna non-admin
+        else {
+            // menghitung total stok keluar khusus untuk pengguna yang login
             $totalStokKeluar = StokKeluar::where('id_pengguna', $pengguna->id_pengguna)->sum('jumlah');
 
+            // mengirim data ke view dashboard untuk non-admin
             return view('dashboard', [
                 'title' => 'Dashboard',
                 'menuDashboard' => 'active',
                 'totalProduk' => $totalProduk,
                 'totalStokKeluar' => $totalStokKeluar,
-                'routeMutasiStok' => route('pengguna.mutasi.stok')  // Update route ini
+                'routeMutasiStok' => route('pengguna.mutasi.stok')
             ]);
         }
     }

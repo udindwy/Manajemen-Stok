@@ -7,34 +7,47 @@ use App\Models\StokMasuk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * controller untuk mengelola stok masuk
+ * menangani pencatatan dan manajemen stok yang masuk ke gudang
+ */
 class StokMasukController extends Controller
 {
-    // method untuk menampilkan semua data stok masuk
+    /**
+     * menampilkan daftar stok masuk
+     * termasuk relasi dengan produk dan supplier
+     */
     public function index()
     {
+        // menyiapkan data untuk tampilan
         $data = [
             'title' => 'Stok Masuk',
             "MMasuk" => "active",
-            'stokMasuk'  => StokMasuk::with(['produk.supplier'])->get(), // Add supplier relation
+            'stokMasuk'  => StokMasuk::with(['produk.supplier'])->get(),
         ];
         return view('admin.stokmasuk.index', $data);
     }
 
-    // method untuk menampilkan form tambah stok masuk
+    /**
+     * menampilkan form tambah stok masuk
+     */
     public function create()
     {
+        // menyiapkan data untuk form tambah
         $data = [
             'title' => 'Tambah Stok Masuk',
-            'MMasuk' => 'active', // menandai menu stok masuk aktif
-            'produk' => Produk::all(), // ambil semua produk untuk pilihan
+            'MMasuk' => 'active',
+            'produk' => Produk::all(),
         ];
         return view('admin.stokmasuk.create', $data);
     }
 
-    // method untuk menyimpan data stok masuk ke database
+    /**
+     * menyimpan data stok masuk baru
+     */
     public function store(Request $request)
     {
-        // validasi input form
+        // validasi input dari form
         $request->validate([
             'id_produk' => 'required|exists:produk,id_produk',
             'jumlah' => 'required|integer|min:1',
@@ -46,7 +59,7 @@ class StokMasukController extends Controller
             'jumlah.min' => 'Jumlah minimal 1',
         ]);
 
-        // simpan data ke tabel stok_masuk
+        // menyimpan data stok masuk
         $stokMasuk = new StokMasuk();
         $stokMasuk->id_produk = $request->id_produk;
         $stokMasuk->jumlah = $request->jumlah;
@@ -54,7 +67,7 @@ class StokMasukController extends Controller
         $stokMasuk->id_pengguna = Auth::id();
         $stokMasuk->save();
 
-        // update stok di tabel produk (tambahkan jumlah stok masuk)
+        // memperbarui jumlah stok produk
         $produk = Produk::findOrFail($request->id_produk);
         $produk->stok += $request->jumlah;
         $produk->save();
@@ -62,22 +75,27 @@ class StokMasukController extends Controller
         return redirect()->route('stokmasuk')->with('success', 'Stok masuk berhasil ditambahkan');
     }
 
-    // method untuk menampilkan form edit stok masuk
+    /**
+     * menampilkan form edit stok masuk
+     */
     public function edit($id_stok_masuk)
     {
+        // menyiapkan data untuk form edit
         $data = [
             'title' => 'Edit Stok Masuk',
             'MMasuk' => 'active',
-            'stokMasuk' => StokMasuk::findOrFail($id_stok_masuk), // ambil data stok masuk yang akan diedit
-            'produk' => Produk::all(), // ambil semua produk untuk pilihan
+            'stokMasuk' => StokMasuk::findOrFail($id_stok_masuk),
+            'produk' => Produk::all(),
         ];
         return view('admin.stokmasuk.edit', $data);
     }
 
-    // method untuk mengupdate data stok masuk di database
+    /**
+     * memperbarui data stok masuk yang ada
+     */
     public function update(Request $request, $id_stok_masuk)
     {
-        // validasi input form
+        // validasi input dari form
         $request->validate([
             'id_produk' => 'required|exists:produk,id_produk',
             'jumlah' => 'required|integer|min:1',
@@ -92,23 +110,23 @@ class StokMasukController extends Controller
             'tanggal_masuk.date' => 'Format tanggal tidak valid',
         ]);
 
-        // ambil data stok_masuk lama
+        // mengambil data stok masuk yang akan diupdate
         $stokMasuk = StokMasuk::findOrFail($id_stok_masuk);
         $jumlahLama = $stokMasuk->jumlah;
 
-        // kurangi stok lama dari produk sebelumnya
+        // mengembalikan stok produk ke jumlah sebelumnya
         $produk = Produk::findOrFail($stokMasuk->id_produk);
         $produk->stok -= $jumlahLama;
         $produk->save();
 
-        // update data stok_masuk dengan input baru
+        // memperbarui data stok masuk
         $stokMasuk->id_produk = $request->id_produk;
         $stokMasuk->jumlah = $request->jumlah;
         $stokMasuk->tanggal_masuk = $request->tanggal_masuk;
         $stokMasuk->id_pengguna = Auth::id();
         $stokMasuk->save();
 
-        // tambahkan jumlah baru ke stok produk (bisa jadi produk berubah)
+        // memperbarui stok produk dengan jumlah baru
         $produkBaru = Produk::findOrFail($request->id_produk);
         $produkBaru->stok += $request->jumlah;
         $produkBaru->save();
@@ -116,26 +134,31 @@ class StokMasukController extends Controller
         return redirect()->route('stokmasuk')->with('success', 'Stok masuk berhasil diupdate');
     }
 
-    // method untuk menghapus data stok masuk
+    /**
+     * menghapus data stok masuk
+     */
     public function destroy($id_stok_masuk)
     {
-        // ambil data stok_masuk
+        // mengambil data yang akan dihapus
         $stokMasuk = StokMasuk::findOrFail($id_stok_masuk);
 
-        // kurangi stok produk dengan jumlah yang akan dihapus
+        // mengembalikan stok produk
         $produk = Produk::findOrFail($stokMasuk->id_produk);
         $produk->stok -= $stokMasuk->jumlah;
         $produk->save();
 
-        // hapus data stok_masuk
+        // menghapus data stok masuk
         $stokMasuk->delete();
 
         return redirect()->route('stokmasuk')->with('success', 'Stok masuk berhasil dihapus');
     }
 
-    // Method untuk scan QR code
+    /**
+     * menampilkan halaman pemindai qr code
+     */
     public function scanQR()
     {
+        // menyiapkan data untuk halaman scan
         $data = [
             'title' => 'Scan QR Code Stok Masuk',
             'MMasuk' => 'active',
@@ -143,12 +166,16 @@ class StokMasukController extends Controller
         return view('admin.stokmasuk.scan', $data);
     }
 
-    // Method untuk mencari produk berdasarkan QR code
+    /**
+     * mencari produk berdasarkan kode qr
+     */
     public function searchByQR(Request $request)
     {
+        // mencari produk berdasarkan kode
         $kode_produk = $request->kode_produk;
         $produk = Produk::where('kode_produk', $kode_produk)->first();
         
+        // mengembalikan response sesuai hasil pencarian
         if ($produk) {
             return response()->json([
                 'success' => true,
@@ -162,11 +189,15 @@ class StokMasukController extends Controller
         ]);
     }
 
-    // Method untuk mendapatkan produk berdasarkan kode
+    /**
+     * mengambil data produk berdasarkan kode
+     */
     public function getProductByCode($kode_produk)
     {
+        // mencari produk berdasarkan kode
         $produk = Produk::where('kode_produk', $kode_produk)->first();
         
+        // mengembalikan response sesuai hasil pencarian
         if ($produk) {
             return response()->json([
                 'success' => true,

@@ -9,14 +9,23 @@ use App\Notifications\StokMinimalNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * controller untuk mengelola stok keluar
+ * menangani pencatatan dan manajemen stok yang keluar dari gudang
+ */
 class StokKeluarController extends Controller
 {
-    // fungsi untuk menampilkan halaman stok keluar
+    /**
+     * menampilkan halaman daftar stok keluar
+     * tampilan berbeda untuk admin dan pengguna biasa
+     */
     public function index()
     {
+        // mengambil data pengguna yang sedang login
         $user = Auth::user();
+
         if ($user->peran == 'admin') {
-            // jika admin, tampilkan semua data stok keluar
+            // menyiapkan data untuk tampilan admin
             $data = [
                 'title' => 'Stok Keluar',
                 "MKeluar" => "active",
@@ -24,24 +33,29 @@ class StokKeluarController extends Controller
             ];
             return view('admin.stokkeluar.index', $data);
         } else {
-            // jika bukan admin, tampilkan halaman tambah stok keluar
+            // menyiapkan data untuk tampilan pengguna
             $data = [
                 'title' => 'Transaksi',
                 "MProdukKaryawan" => "active",
-                'produk' => Produk::all()  // ambil semua produk
+                'produk' => Produk::all()
             ];
             return view('pengguna.produk.create', $data);
         }
     }
 
-    // fungsi untuk menampilkan form tambah stok keluar
+    /**
+     * menampilkan form tambah stok keluar
+     * dapat menerima kode produk dari pemindaian qr
+     */
     public function create(Request $request)
     {
+        // mencari produk berdasarkan kode jika ada
         $selectedProduct = null;
         if ($request->has('kode_produk')) {
             $selectedProduct = Produk::where('kode_produk', $request->kode_produk)->first();
         }
 
+        // menyiapkan data untuk form
         $data = [
             'title' => 'Tambah Stok Keluar',
             'MKeluar' => 'active',
@@ -49,7 +63,7 @@ class StokKeluarController extends Controller
             'selectedProduct' => $selectedProduct
         ];
 
-        // Modifikasi data title dan menu active untuk pengguna
+        // menyesuaikan tampilan untuk pengguna non-admin
         if (Auth::user()->peran != 'admin') {
             $data['title'] = 'Transaksi';
             $data['MProdukKaryawan'] = 'active';
@@ -59,10 +73,13 @@ class StokKeluarController extends Controller
         return view('admin.stokkeluar.create', $data);
     }
 
-    // fungsi untuk menyimpan data stok keluar baru
+    /**
+     * menyimpan data stok keluar baru
+     * termasuk pembaruan stok dan notifikasi
+     */
     public function store(Request $request)
     {
-        // validasi input
+        // validasi input dari form
         $request->validate([
             'id_produk' => 'required|exists:produk,id_produk',
             'jumlah' => 'required|integer|min:1',
@@ -74,17 +91,18 @@ class StokKeluarController extends Controller
             'jumlah.min' => 'Jumlah minimal 1',
         ]);
 
-        // Set tanggal_keluar ke waktu sekarang
+        // menambahkan tanggal keluar otomatis
         $request->merge(['tanggal_keluar' => now()]);
 
+        // mengambil data produk
         $produk = Produk::findOrFail($request->id_produk);
 
-        // cek stok produk mencukupi
+        // memastikan stok mencukupi
         if ($produk->stok < $request->jumlah) {
             return redirect()->back()->withErrors(['jumlah' => 'Stok tidak mencukupi untuk dikeluarkan'])->withInput();
         }
 
-        // simpan data ke stok_keluar
+        // menyimpan data stok keluar
         $stokKeluar = new StokKeluar();
         $stokKeluar->id_produk = $request->id_produk;
         $stokKeluar->id_pengguna = Auth::user()->id_pengguna;
@@ -92,21 +110,19 @@ class StokKeluarController extends Controller
         $stokKeluar->tanggal_keluar = now();
         $stokKeluar->save();
 
-        // Update stok produk
-        $produk = Produk::find($request->id_produk);
+        // memperbarui stok produk
         $produk->stok -= $request->jumlah;
         $produk->save();
 
-        // Cek jika stok sudah mencapai atau di bawah batas minimal
+        // mengirim notifikasi jika stok minimal tercapai
         if ($produk->stok <= $produk->stok_minimal) {
-            // Kirim notifikasi ke semua admin
             $admins = Pengguna::where('peran', 'admin')->get();
             foreach ($admins as $admin) {
                 $admin->notify(new StokMinimalNotification($produk));
             }
         }
 
-        // Redirect ke halaman produk untuk pengguna
+        // mengarahkan pengguna ke halaman yang sesuai
         if (Auth::user()->peran == 'pengguna') {
             return redirect()->route('produk')->with('success', 'Transaksi berhasil dilakukan');
         }
@@ -114,9 +130,12 @@ class StokKeluarController extends Controller
         return redirect()->route('stokkeluar')->with('success', 'Stok keluar berhasil ditambahkan');
     }
 
-    // fungsi untuk menampilkan form edit stok keluar
+    /**
+     * menampilkan form edit stok keluar
+     */
     public function edit($id_stok_keluar)
     {
+        // menyiapkan data untuk form edit
         $data = [
             'title' => 'Edit Stok Keluar',
             'MKeluar' => 'active',
@@ -126,10 +145,12 @@ class StokKeluarController extends Controller
         return view('admin.stokkeluar.edit', $data);
     }
 
-    // fungsi untuk memperbarui data stok keluar
+    /**
+     * memperbarui data stok keluar yang ada
+     */
     public function update(Request $request, $id_stok_keluar)
     {
-        // validasi input
+        // validasi input dari form
         $request->validate([
             'id_produk' => 'required|exists:produk,id_produk',
             'jumlah' => 'required|integer|min:1',
@@ -144,50 +165,58 @@ class StokKeluarController extends Controller
             'tanggal_keluar.date' => 'Format tanggal tidak valid',
         ]);
 
-        // ambil data stok_keluar lama
+        // mengambil data yang akan diupdate
         $stokKeluar = StokKeluar::findOrFail($id_stok_keluar);
         $produk = Produk::findOrFail($request->id_produk);
 
-        // kembalikan stok produk sebelumnya
+        // kembalikan stok sebelum update
         $produk->stok += $stokKeluar->jumlah;
 
-        // cek stok mencukupi untuk jumlah baru
+        // memastikan stok mencukupi untuk jumlah baru
         if ($produk->stok < $request->jumlah) {
             return redirect()->back()->withErrors(['jumlah' => 'Stok tidak mencukupi untuk dikeluarkan'])->withInput();
         }
 
-        // update data stok_keluar
+        // memperbarui data stok keluar
         $stokKeluar->id_produk = $request->id_produk;
         $stokKeluar->jumlah = $request->jumlah;
         $stokKeluar->tanggal_keluar = $request->tanggal_keluar;
         $stokKeluar->id_pengguna = Auth::id();
         $stokKeluar->save();
 
-        // update stok produk
+        // memperbarui stok produk
         $produk->stok -= $request->jumlah;
         $produk->save();
 
         return redirect()->route('stokkeluar')->with('success', 'Stok keluar berhasil diupdate');
     }
 
-    // fungsi untuk menghapus data stok keluar
+    /**
+     * menghapus data stok keluar
+     */
     public function destroy($id_stok_keluar)
     {
+        // mengambil data yang akan dihapus
         $stokKeluar = StokKeluar::findOrFail($id_stok_keluar);
         $produk = Produk::findOrFail($stokKeluar->id_produk);
 
-        // kembalikan stok produk
+        // mengembalikan stok produk
         $produk->stok += $stokKeluar->jumlah;
         $produk->save();
 
-        // hapus data stok_keluar
+        // menghapus data stok keluar
         $stokKeluar->delete();
 
         return redirect()->route('stokkeluar')->with('success', 'Stok keluar berhasil dihapus');
     }
 
+    /**
+     * mengambil data produk berdasarkan kode
+     * digunakan untuk pencarian produk via ajax
+     */
     public function getProductByCode($kode_produk)
     {
+        // mencari produk berdasarkan kode
         $produk = Produk::where('kode_produk', $kode_produk)->first();
 
         if ($produk) {

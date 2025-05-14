@@ -8,36 +8,44 @@ use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * controller untuk mengelola semua jenis laporan stok
+ * menangani laporan mutasi stok, stok masuk, dan stok keluar
+ * dapat menghasilkan laporan dalam format pdf
+ */
 class LaporanController extends Controller
 {
-    // menampilkan halaman laporan mutasi stok
+    /**
+     * menampilkan halaman laporan mutasi stok
+     * menampilkan data berbeda untuk admin dan pengguna biasa
+     */
     public function mutasiStok()
     {
+        // mengambil data pengguna yang sedang login
         $user = Auth::user();
 
+        // menyiapkan data untuk tampilan
         $data = [
             'title' => 'Laporan',
             $user->peran == 'admin' ? "MLaporan" : "MLaporanKaryawan" => "active",
-            'kategori' => \App\Models\Kategori::all(), // Tambahkan ini untuk menyediakan data kategori
+            'kategori' => \App\Models\Kategori::all(),
         ];
 
-        // ambil data stok masuk dan stok keluar sesuai dengan peran pengguna
+        // mengambil data stok berdasarkan peran pengguna
         if ($user->peran == 'admin') {
-            // admin bisa melihat semua data stok masuk dan keluar
             $stokMasuk = StokMasuk::with('produk')->get();
             $stokKeluar = StokKeluar::with(['produk', 'pengguna'])->get();
         } else {
-            // pengguna biasa tidak bisa melihat stok masuk
-            $stokMasuk = collect(); // stok masuk dikosongkan
-            // pengguna hanya melihat stok keluar miliknya
+            $stokMasuk = collect();
             $stokKeluar = StokKeluar::with(['produk', 'pengguna'])
-                ->where('id_pengguna', $user->id_pengguna) // filter berdasarkan id pengguna
+                ->where('id_pengguna', $user->id_pengguna)
                 ->get();
         }
 
-        $mutasi = collect(); // buat koleksi kosong untuk menyimpan data mutasi stok
+        // menyiapkan koleksi untuk data mutasi
+        $mutasi = collect();
 
-        // gabungkan data stok masuk ke dalam koleksi mutasi
+        // memasukkan data stok masuk ke koleksi mutasi
         foreach ($stokMasuk as $masuk) {
             $mutasi->push([
                 'kode_produk' => $masuk->produk->kode_produk,
@@ -45,12 +53,12 @@ class LaporanController extends Controller
                 'tanggal' => $masuk->tanggal_masuk,
                 'jenis' => 'Stok Masuk',
                 'jumlah' => $masuk->jumlah,
-                'sisa_stok' => $user->peran == 'admin' ? $masuk->produk->stok : '-', // hanya admin yang bisa melihat stok
-                'nama_pengguna' => $masuk->pengguna->nama ?? 'Admin', // jika tidak ada pengguna, tampilkan 'admin'
+                'sisa_stok' => $user->peran == 'admin' ? $masuk->produk->stok : '-',
+                'nama_pengguna' => $masuk->pengguna->nama ?? 'Admin',
             ]);
         }
 
-        // gabungkan data stok keluar ke dalam koleksi mutasi
+        // memasukkan data stok keluar ke koleksi mutasi
         foreach ($stokKeluar as $keluar) {
             $mutasi->push([
                 'kode_produk' => $keluar->produk->kode_produk,
@@ -59,15 +67,15 @@ class LaporanController extends Controller
                 'tanggal' => $keluar->tanggal_keluar,
                 'jenis' => 'Stok Keluar',
                 'jumlah' => $keluar->jumlah,
-                'sisa_stok' => $user->peran == 'admin' ? $keluar->produk->stok : '-', // hanya admin yang bisa melihat stok
-                'nama_pengguna' => $keluar->pengguna->nama ?? '-', // jika tidak ada pengguna, tampilkan tanda '-'
+                'sisa_stok' => $user->peran == 'admin' ? $keluar->produk->stok : '-',
+                'nama_pengguna' => $keluar->pengguna->nama ?? '-',
             ]);
         }
 
-        $mutasi = $mutasi->sortBy('tanggal'); // urutkan data mutasi berdasarkan tanggal
+        // mengurutkan data berdasarkan tanggal
+        $mutasi = $mutasi->sortBy('tanggal');
 
-        // tampilkan halaman laporan mutasi stok dan kirim data mutasi
-        // Arahkan ke view yang sesuai berdasarkan peran
+        // menentukan view berdasarkan peran pengguna
         $viewPath = $user->peran == 'admin'
             ? 'admin.laporan.mutasi_stok'
             : 'pengguna.laporan.mutasi_stok';
@@ -75,11 +83,16 @@ class LaporanController extends Controller
         return view($viewPath, $data, compact('mutasi'));
     }
 
+    /**
+     * mengekspor laporan mutasi stok ke dalam format pdf
+     * data yang diekspor disesuaikan dengan peran pengguna
+     */
     public function exportMutasiStokPDF()
     {
+        // mengambil data pengguna yang sedang login
         $user = Auth::user();
 
-        // Update eager loading to include kategori
+        // mengambil data stok dengan relasi kategori
         if ($user->peran == 'admin') {
             $stokMasuk = StokMasuk::with(['produk.kategori'])->get();
             $stokKeluar = StokKeluar::with(['produk.kategori', 'pengguna'])->get();
@@ -90,8 +103,10 @@ class LaporanController extends Controller
                 ->get();
         }
 
+        // menyiapkan koleksi untuk data mutasi
         $mutasi = collect();
 
+        // memasukkan data stok masuk
         foreach ($stokMasuk as $masuk) {
             $mutasi->push([
                 'nama_produk' => $masuk->produk->nama_produk,
@@ -105,6 +120,7 @@ class LaporanController extends Controller
             ]);
         }
 
+        // memasukkan data stok keluar
         foreach ($stokKeluar as $keluar) {
             $mutasi->push([
                 'nama_produk' => $keluar->produk->nama_produk,
@@ -118,36 +134,43 @@ class LaporanController extends Controller
             ]);
         }
 
-        $mutasi = $mutasi->sortBy('tanggal'); // urutkan data berdasarkan tanggal
+        // mengurutkan data berdasarkan tanggal
+        $mutasi = $mutasi->sortBy('tanggal');
 
-        // buat dan download file pdf dari view laporan
-        // Gunakan template PDF yang sesuai berdasarkan peran
+        // menentukan template pdf berdasarkan peran
         $viewPath = $user->peran == 'admin'
             ? 'admin.laporan.mutasi_stok_pdf'
             : 'pengguna.laporan.mutasi_stok_pdf';
 
+        // membuat dan mengunduh file pdf
         $pdf = Pdf::loadView($viewPath, compact('mutasi'));
         return $pdf->download('laporan-mutasi-stok.pdf');
     }
 
+    /**
+     * menampilkan laporan stok masuk
+     * dapat difilter berdasarkan kategori dan rentang tanggal
+     */
     public function mutasiStokMasuk(Request $request)
     {
+        // menyiapkan data untuk tampilan
         $data = [
             'title' => 'Laporan Stok Masuk',
             'MLaporan' => 'active',
             'kategori' => \App\Models\Kategori::all(),
         ];
 
+        // memulai query dengan relasi yang diperlukan
         $query = StokMasuk::with(['produk.supplier', 'produk.kategori', 'pengguna']);
 
-        // Filter by category if selected
+        // menerapkan filter kategori jika ada
         if ($request->kategori) {
             $query->whereHas('produk', function($q) use ($request) {
                 $q->where('id_kategori', $request->kategori);
             });
         }
 
-        // Filter by date range if selected
+        // menerapkan filter rentang tanggal jika ada
         if ($request->tanggal_awal && $request->tanggal_akhir) {
             $query->whereBetween('tanggal_masuk', [
                 $request->tanggal_awal . ' 00:00:00',
@@ -155,6 +178,7 @@ class LaporanController extends Controller
             ]);
         }
 
+        // mengambil data dan menyiapkan untuk tampilan
         $stokMasuk = $query->get();
         $mutasi = collect();
 
@@ -174,18 +198,23 @@ class LaporanController extends Controller
         return view('admin.laporan.mutasi_stok_masuk', $data, compact('mutasi'));
     }
 
+    /**
+     * mengekspor laporan stok masuk ke dalam format pdf
+     * dapat difilter berdasarkan kategori dan rentang tanggal
+     */
     public function mutasiStokMasukPDF(Request $request)
     {
+        // memulai query dengan relasi yang diperlukan
         $query = StokMasuk::with(['produk.supplier', 'produk.kategori', 'pengguna']);
 
-        // Filter by category if selected
+        // menerapkan filter kategori jika ada
         if ($request->kategori) {
             $query->whereHas('produk', function($q) use ($request) {
                 $q->where('id_kategori', $request->kategori);
             });
         }
 
-        // Filter by date range if selected
+        // menerapkan filter rentang tanggal jika ada
         if ($request->tanggal_awal && $request->tanggal_akhir) {
             $query->whereBetween('tanggal_masuk', [
                 $request->tanggal_awal . ' 00:00:00',
@@ -193,6 +222,7 @@ class LaporanController extends Controller
             ]);
         }
 
+        // mengambil data dan menyiapkan untuk pdf
         $stokMasuk = $query->get();
         $mutasi = collect();
 
@@ -209,28 +239,35 @@ class LaporanController extends Controller
             ]);
         }
 
+        // membuat dan mengunduh file pdf
         $pdf = PDF::loadView('admin.laporan.mutasi_stok_masuk_pdf', compact('mutasi'));
         return $pdf->download('laporan-stok-masuk.pdf');
     }
 
+    /**
+     * menampilkan laporan stok keluar
+     * dapat difilter berdasarkan kategori dan rentang tanggal
+     */
     public function mutasiStokKeluar(Request $request)
     {
+        // menyiapkan data untuk tampilan
         $data = [
             'title' => 'Laporan Stok Keluar',
             'MLaporan' => 'active',
             'kategori' => \App\Models\Kategori::all(),
         ];
 
+        // memulai query dengan relasi yang diperlukan
         $query = StokKeluar::with(['produk.kategori', 'pengguna']);
 
-        // Filter by category if selected
+        // menerapkan filter kategori jika ada
         if ($request->kategori) {
             $query->whereHas('produk', function($q) use ($request) {
                 $q->where('id_kategori', $request->kategori);
             });
         }
 
-        // Filter by date range if selected
+        // menerapkan filter rentang tanggal jika ada
         if ($request->tanggal_awal && $request->tanggal_akhir) {
             $query->whereBetween('tanggal_keluar', [
                 $request->tanggal_awal . ' 00:00:00',
@@ -238,6 +275,7 @@ class LaporanController extends Controller
             ]);
         }
 
+        // mengambil data dan menyiapkan untuk tampilan
         $stokKeluar = $query->get();
         $mutasi = collect();
 
@@ -256,18 +294,23 @@ class LaporanController extends Controller
         return view('admin.laporan.mutasi_stok_keluar', $data, compact('mutasi'));
     }
 
+    /**
+     * mengekspor laporan stok keluar ke dalam format pdf
+     * dapat difilter berdasarkan kategori dan rentang tanggal
+     */
     public function mutasiStokKeluarPDF(Request $request)
     {
+        // memulai query dengan relasi yang diperlukan
         $query = StokKeluar::with(['produk.kategori', 'pengguna']);
 
-        // Filter by category if selected
+        // menerapkan filter kategori jika ada
         if ($request->kategori) {
             $query->whereHas('produk', function($q) use ($request) {
                 $q->where('id_kategori', $request->kategori);
             });
         }
 
-        // Filter by date range if selected
+        // menerapkan filter rentang tanggal jika ada
         if ($request->tanggal_awal && $request->tanggal_akhir) {
             $query->whereBetween('tanggal_keluar', [
                 $request->tanggal_awal . ' 00:00:00',
@@ -275,6 +318,7 @@ class LaporanController extends Controller
             ]);
         }
 
+        // mengambil data dan menyiapkan untuk pdf
         $stokKeluar = $query->get();
         $mutasi = collect();
 
@@ -290,29 +334,39 @@ class LaporanController extends Controller
             ]);
         }
 
+        // menyiapkan data tambahan untuk pdf
         $data = [
             'mutasi' => $mutasi,
             'tanggal_awal' => $request->tanggal_awal,
             'tanggal_akhir' => $request->tanggal_akhir
         ];
 
+        // membuat dan mengunduh file pdf
         $pdf = PDF::loadView('admin.laporan.mutasi_stok_keluar_pdf', $data);
         return $pdf->download('laporan-stok-keluar.pdf');
     }
 
+    /**
+     * menampilkan laporan mutasi stok untuk pengguna tertentu
+     * dapat difilter berdasarkan kategori dan rentang tanggal
+     */
     public function mutasiStokPengguna(Request $request)
     {
+        // mengambil data pengguna yang sedang login
         $user = Auth::user();
         
+        // memulai query dengan relasi yang diperlukan
         $query = StokKeluar::with(['produk.kategori', 'pengguna'])
             ->where('id_pengguna', $user->id_pengguna);
 
+        // menerapkan filter kategori jika ada
         if ($request->kategori) {
             $query->whereHas('produk', function($q) use ($request) {
                 $q->where('id_kategori', $request->kategori);
             });
         }
 
+        // menerapkan filter rentang tanggal jika ada
         if ($request->tanggal_awal && $request->tanggal_akhir) {
             $query->whereBetween('tanggal_keluar', [
                 $request->tanggal_awal . ' 00:00:00',
@@ -320,6 +374,7 @@ class LaporanController extends Controller
             ]);
         }
 
+        // mengambil data dan menyiapkan untuk tampilan
         $stokKeluar = $query->get();
         $mutasi = collect();
 
@@ -333,29 +388,36 @@ class LaporanController extends Controller
             ]);
         }
 
+        // mengembalikan view dengan data yang diperlukan
         return view('pengguna.laporan.mutasi_stok', [
             'title' => 'Mutasi Stok Saya',
             'MLaporanKaryawan' => 'active',
-            'kategori' => \App\Models\Kategori::all(), // Add this line to pass categories
+            'kategori' => \App\Models\Kategori::all(),
             'mutasi' => $mutasi
         ]);
     }
 
+    /**
+     * mengekspor laporan mutasi stok pengguna ke dalam format pdf
+     * dapat difilter berdasarkan kategori dan rentang tanggal
+     */
     public function mutasiStokPDF(Request $request)
     {
+        // mengambil data pengguna yang sedang login
         $pengguna = Auth::user();
         
+        // memulai query dengan relasi yang diperlukan
         $query = StokKeluar::with(['produk.kategori', 'pengguna'])
             ->where('id_pengguna', $pengguna->id_pengguna);
 
-        // Filter berdasarkan kategori jika dipilih
+        // menerapkan filter kategori jika ada
         if ($request->kategori) {
             $query->whereHas('produk', function($q) use ($request) {
                 $q->where('id_kategori', $request->kategori);
             });
         }
 
-        // Filter berdasarkan rentang tanggal jika dipilih
+        // menerapkan filter rentang tanggal jika ada
         if ($request->tanggal_awal && $request->tanggal_akhir) {
             $query->whereBetween('tanggal_keluar', [
                 $request->tanggal_awal . ' 00:00:00',
@@ -363,6 +425,7 @@ class LaporanController extends Controller
             ]);
         }
 
+        // mengambil data dan menyiapkan untuk pdf
         $stokKeluar = $query->get();
         $mutasi = collect();
 
@@ -376,12 +439,14 @@ class LaporanController extends Controller
             ]);
         }
 
+        // menyiapkan data tambahan untuk pdf
         $data = [
             'mutasi' => $mutasi,
             'tanggal_awal' => $request->tanggal_awal,
             'tanggal_akhir' => $request->tanggal_akhir
         ];
 
+        // membuat dan mengunduh file pdf
         $pdf = PDF::loadView('pengguna.laporan.mutasi_stok_pdf', $data);
         return $pdf->download('laporan-mutasi-stok-' . date('Y-m-d') . '.pdf');
     }
