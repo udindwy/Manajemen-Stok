@@ -38,7 +38,13 @@
                                     <td class="text-center">{{ $loop->iteration }}</td>
                                     <td>{{ $item->nama }}</td>
                                     <td>{{ $item->email }}</td>
-                                    <td class="text-center">{{ $item->peran }}</td>
+                                    <td class="text-center">
+                                        @if($item->peran == 'admin')
+                                            <span class="badge badge-danger">{{ $item->peran }}</span>
+                                        @else
+                                            <span class="badge badge-success">{{ $item->peran }}</span>
+                                        @endif
+                                    </td>
                                     <td class="text-center">
                                         {{ \Carbon\Carbon::parse($item->dibuat_pada)->format('d/m/Y H:i') }}</td>
                                     <td class="text-center align-middle">

@@ -15,7 +15,7 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
  * controller untuk mengelola data produk
  * menangani operasi crud produk dan pemindaian qr code
  */
-class ProdukController extends Controller 
+class ProdukController extends Controller
 {
     /**
      * menampilkan daftar produk
@@ -99,7 +99,16 @@ class ProdukController extends Controller
             'id_kategori' => 'required',
             'id_supplier' => 'required',
             'stok' => 'required|integer|min:0',
-            'stok_minimal' => 'required|integer|min:0',
+            'stok_minimal' => [
+                'required',
+                'integer',
+                'min:0',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($value > $request->stok) {
+                        $fail('Stok minimal tidak boleh lebih besar dari stok awal');
+                    }
+                },
+            ],
             'deskripsi' => 'required|string',
         ], [
             'nama_produk.required' => 'Nama produk tidak boleh kosong',
@@ -234,7 +243,7 @@ class ProdukController extends Controller
     {
         // mengambil data produk dan relasinya
         $produk = Produk::with(['kategori', 'supplier'])->findOrFail($id_produk);
-        
+
         // menghitung total stok masuk dan keluar
         $totalStokMasuk = StokMasuk::where('id_produk', $id_produk)->sum('jumlah');
         $totalStokKeluar = StokKeluar::where('id_produk', $id_produk)->sum('jumlah');

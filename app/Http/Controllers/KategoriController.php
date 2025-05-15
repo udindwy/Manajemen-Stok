@@ -113,9 +113,16 @@ class KategoriController extends Controller
     public function delete($id_kategori)
     {
         $kategori = Kategori::findOrFail($id_kategori);
-        $kategori->delete(); // hapus dari database
+        
+        // cek apakah kategori sedang digunakan oleh produk
+        if ($kategori->produk()->count() > 0) {
+            return redirect()->route('kategori')
+                           ->with('error', 'Kategori tidak dapat dihapus karena sedang digunakan oleh produk');
+        }
 
-        // redirect ke halaman kategori dengan pesan sukses
-        return redirect()->route('kategori')->with('success', 'Kategori berhasil dihapus');
+        $kategori->delete();
+
+        return redirect()->route('kategori')
+                       ->with('success', 'Kategori berhasil dihapus');
     }
 }
