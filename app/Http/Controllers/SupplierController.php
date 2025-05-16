@@ -133,15 +133,18 @@ class SupplierController extends Controller
         // mencari data supplier yang akan dihapus
         $supplier = Supplier::findOrFail($id_supplier);
 
-        // menghapus referensi supplier dari produk terkait
-        Produk::where('id_supplier', $id_supplier)
-            ->update(['id_supplier' => null]);
+        // cek apakah supplier sedang digunakan oleh produk
+        $produkCount = Produk::where('id_supplier', $id_supplier)->count();
+        if ($produkCount > 0) {
+            return redirect()->route('supplier.index')
+                           ->with('error', 'Supplier tidak dapat dihapus karena sedang digunakan oleh produk');
+        }
 
         // menghapus data supplier
         $supplier->delete();
 
         // kembali ke halaman daftar supplier dengan pesan sukses
         return redirect()->route('supplier.index')
-            ->with('success', 'Data supplier berhasil dihapus');
+                       ->with('success', 'Data supplier berhasil dihapus');
     }
 }
