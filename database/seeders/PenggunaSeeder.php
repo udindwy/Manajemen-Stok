@@ -11,7 +11,7 @@ class PenggunaSeeder extends Seeder
     public function run()
     {
         Pengguna::create([
-            'nama' => 'Administrator',
+            'nama' => 'Admin',
             'email' => 'udin.dwi@students.utdi.ac.id',
             'password' => Hash::make('admin123'),
             'peran' => 'admin',
